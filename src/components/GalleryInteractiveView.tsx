@@ -5,6 +5,7 @@ import Image from "next/image";
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
 import { type GalleryItem } from "@/data/gallery";
 import { Photo } from "@/components/Photo";
+import { Reveal } from "@/components/Reveal";
 
 interface GalleryInteractiveViewProps {
   items: GalleryItem[];
@@ -188,7 +189,12 @@ export function GalleryInteractiveView({ items }: GalleryInteractiveViewProps) {
               : "sm:col-span-1 lg:col-span-6";
 
           return (
-            <div key={item.id} className={colSpan}>
+            <Reveal
+              key={item.id}
+              className={colSpan}
+              delay={(index % 4) * 0.07}
+              reverseDelay={(3 - (index % 4)) * 0.05}
+            >
               <button
                 type="button"
                 onClick={(e) => openLightbox(index, e.currentTarget)}
@@ -222,7 +228,7 @@ export function GalleryInteractiveView({ items }: GalleryInteractiveViewProps) {
                   {item.label}
                 </span>
               </button>
-            </div>
+            </Reveal>
           );
         })}
       </div>

@@ -5,8 +5,8 @@ import { popularItems, formatPrice } from "@/data/menu";
 import { Photo } from "@/components/Photo";
 import { AnimatedButton, AnimatedLink } from "@/components/AnimatedButton";
 import { CoffeeCupWithSteam, CoffeeBeans, BotanicalSprig } from "@/components/LineIllustrations";
-import { TextReveal, StaggerContainer, StaggerItem } from "@/components/TextReveal";
-import { ScrollReveal, ImageReveal } from "@/components/ScrollReveal";
+import { Reveal, ImageReveal, TextReveal } from "@/components/Reveal";
+import { StaggerContainer, StaggerItem } from "@/components/TextReveal";
 
 export const metadata: Metadata = {
   title: `${cafeConfig.name} | ${cafeConfig.tagline}`,
@@ -46,7 +46,7 @@ export default function HomePage() {
               </div>
 
               {/* Masked Hero Title with natural italic contrast word */}
-              <TextReveal as="h1" className="w-full">
+              <TextReveal as="h1" className="w-full" isHero={true}>
                 <span
                   id="hero-heading"
                   className="block font-heading text-4xl font-semibold tracking-tight text-cafe-espresso sm:text-5xl lg:text-6xl lg:leading-[1.12]"
@@ -78,7 +78,7 @@ export default function HomePage() {
 
             {/* Right Column: Overlapping photo slots with soft scale entrance */}
             <div className="relative mx-auto w-full max-w-md lg:col-span-5 lg:max-w-none">
-              <ImageReveal delay={0.25}>
+              <ImageReveal delay={0.25} isHero={true}>
                 {/* Primary large portrait slot */}
                 <div className="w-full sm:w-5/6">
                   <Photo
@@ -114,7 +114,7 @@ export default function HomePage() {
           className="w-full border-y border-cafe-border bg-cafe-cream-deep py-8 sm:py-10"
         >
           <div className="mx-auto max-w-site px-4 sm:px-6 lg:px-8">
-            <ScrollReveal className="flex flex-col items-start justify-between gap-6 rounded-[2px] border border-cafe-border bg-cafe-cream/80 p-6 sm:flex-row sm:items-center sm:px-8 sm:py-6">
+            <Reveal className="flex flex-col items-start justify-between gap-6 rounded-[2px] border border-cafe-border bg-cafe-cream/80 p-6 sm:flex-row sm:items-center sm:px-8 sm:py-6">
               <div className="flex items-start gap-4">
                 <CoffeeBeans className="mt-1 h-7 w-7 shrink-0 text-cafe-terracotta" />
                 <div className="flex flex-col gap-1">
@@ -146,7 +146,7 @@ export default function HomePage() {
                   Order at counter
                 </AnimatedButton>
               </div>
-            </ScrollReveal>
+            </Reveal>
           </div>
         </section>
       )}
@@ -160,7 +160,7 @@ export default function HomePage() {
           <div className="grid grid-cols-1 items-start gap-12 lg:grid-cols-12 lg:gap-14">
             {/* Left Column: Heading and editorial item list */}
             <div className="flex flex-col gap-8 lg:col-span-7">
-              <ScrollReveal>
+              <Reveal>
                 <span className="text-xs font-semibold uppercase tracking-widest text-cafe-olive">
                   Daily Staples
                 </span>
@@ -173,12 +173,17 @@ export default function HomePage() {
                 <p className="mt-2 text-sm text-cafe-espresso/80">
                   Prepared with ethical estate beans, regional whole milk, and stone ground flours.
                 </p>
-              </ScrollReveal>
+              </Reveal>
 
               {/* Editorial list with interactive row shift on hover */}
               <div className="divide-y divide-cafe-border border-y border-cafe-border">
                 {popularItems.map((item, idx) => (
-                  <ScrollReveal key={item.id} delay={idx * 0.08} as="article">
+                  <Reveal
+                    key={item.id}
+                    delay={idx * 0.08}
+                    reverseDelay={(popularItems.length - 1 - idx) * 0.06}
+                    as="article"
+                  >
                     <div className="group cursor-pointer py-5 transition-transform duration-200 ease-out hover:translate-x-1.5">
                       <div className="flex items-baseline justify-between gap-4">
                         <div className="flex items-baseline gap-2">
@@ -199,7 +204,7 @@ export default function HomePage() {
                         {item.description}
                       </p>
                     </div>
-                  </ScrollReveal>
+                  </Reveal>
                 ))}
               </div>
 
@@ -213,7 +218,7 @@ export default function HomePage() {
 
             {/* Right Column: Tactile photo slot beside list */}
             <div className="flex flex-col gap-4 lg:col-span-5">
-              <ScrollReveal delay={0.2}>
+              <Reveal delay={0.2} reverseDelay={0.1}>
                 <Photo
                   alt="Traditional drip coffee brewing and service"
                   aspectRatio="4/5"
@@ -224,7 +229,7 @@ export default function HomePage() {
                 <p className="mt-3 text-xs text-cafe-olive">
                   Coffee beans ground to order for each pour. Filter roasts rotate monthly.
                 </p>
-              </ScrollReveal>
+              </Reveal>
             </div>
           </div>
         </div>
@@ -239,7 +244,7 @@ export default function HomePage() {
           <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-12 lg:gap-14">
             {/* Left Photo slot */}
             <div className="lg:col-span-5">
-              <ScrollReveal>
+              <Reveal>
                 <Photo
                   alt="Bakery flour prep and sourdough kneading table"
                   aspectRatio="4/3"
@@ -247,12 +252,12 @@ export default function HomePage() {
                   illustration="sprig"
                   className="w-full"
                 />
-              </ScrollReveal>
+              </Reveal>
             </div>
 
             {/* Right Plain text */}
             <div className="flex flex-col items-start gap-5 lg:col-span-7">
-              <ScrollReveal delay={0.15}>
+              <Reveal delay={0.15} reverseDelay={0.08}>
                 <div className="flex items-center gap-2">
                   <BotanicalSprig className="h-6 w-6 text-cafe-olive" />
                   <span className="text-xs font-semibold uppercase tracking-widest text-cafe-olive">
@@ -277,7 +282,7 @@ export default function HomePage() {
                     <ArrowRight className="h-4 w-4" aria-hidden="true" />
                   </AnimatedLink>
                 </div>
-              </ScrollReveal>
+              </Reveal>
             </div>
           </div>
         </div>
@@ -289,7 +294,7 @@ export default function HomePage() {
         className="w-full bg-cafe-cream py-16 sm:py-24"
       >
         <div className="mx-auto max-w-site px-4 sm:px-6 lg:px-8">
-          <ScrollReveal>
+          <Reveal>
             <div className="flex flex-col items-start justify-between gap-4 border-b border-cafe-border pb-6 sm:flex-row sm:items-end">
               <div>
                 <span className="text-xs font-semibold uppercase tracking-widest text-cafe-olive">
@@ -308,11 +313,11 @@ export default function HomePage() {
                 <ArrowRight className="h-4 w-4" aria-hidden="true" />
               </AnimatedLink>
             </div>
-          </ScrollReveal>
+          </Reveal>
 
           {/* Uneven photo grid with varying aspect ratios and hover zoom */}
           <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-12">
-            <ScrollReveal className="sm:col-span-7" delay={0.05}>
+            <Reveal className="sm:col-span-7" delay={0.05} reverseDelay={0.15}>
               <Photo
                 alt="Sunlit indoor wood tables and reading bench"
                 aspectRatio="16/9"
@@ -320,9 +325,9 @@ export default function HomePage() {
                 hoverZoom
                 className="h-full"
               />
-            </ScrollReveal>
+            </Reveal>
 
-            <ScrollReveal className="sm:col-span-5" delay={0.1}>
+            <Reveal className="sm:col-span-5" delay={0.1} reverseDelay={0.1}>
               <Photo
                 alt="Fresh morning pastries on wooden cooling rack"
                 aspectRatio="1/1"
@@ -331,9 +336,9 @@ export default function HomePage() {
                 hoverZoom
                 className="h-full"
               />
-            </ScrollReveal>
+            </Reveal>
 
-            <ScrollReveal className="sm:col-span-5" delay={0.15}>
+            <Reveal className="sm:col-span-5" delay={0.15} reverseDelay={0.05}>
               <Photo
                 alt="Espresso machine portafilter extraction"
                 aspectRatio="4/3"
@@ -342,9 +347,9 @@ export default function HomePage() {
                 hoverZoom
                 className="h-full"
               />
-            </ScrollReveal>
+            </Reveal>
 
-            <ScrollReveal className="sm:col-span-7" delay={0.2}>
+            <Reveal className="sm:col-span-7" delay={0.2} reverseDelay={0}>
               <Photo
                 alt="Quiet rear courtyard with green potted plants"
                 aspectRatio="16/9"
@@ -353,7 +358,7 @@ export default function HomePage() {
                 hoverZoom
                 className="h-full"
               />
-            </ScrollReveal>
+            </Reveal>
           </div>
         </div>
       </section>
@@ -364,7 +369,7 @@ export default function HomePage() {
         className="w-full border-t border-cafe-espresso bg-cafe-espresso text-cafe-cream py-16 sm:py-24"
       >
         <div className="mx-auto max-w-site px-4 sm:px-6 lg:px-8">
-          <ScrollReveal>
+          <Reveal>
             <div className="grid grid-cols-1 gap-12 lg:grid-cols-12 lg:gap-14">
               {/* Col 1: Address and directions */}
               <div className="flex flex-col gap-4 lg:col-span-5">
@@ -466,7 +471,7 @@ export default function HomePage() {
                 </div>
               </div>
             </div>
-          </ScrollReveal>
+          </Reveal>
         </div>
       </section>
     </div>

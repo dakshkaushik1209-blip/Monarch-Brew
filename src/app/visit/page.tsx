@@ -8,6 +8,7 @@ import { ClickToLoadMap } from "@/components/ClickToLoadMap";
 import { ReservationForm } from "@/components/ReservationForm";
 import { OpeningHoursTable } from "@/components/OpeningHoursTable";
 import { CoffeeCupWithSteam } from "@/components/LineIllustrations";
+import { Reveal } from "@/components/Reveal";
 
 export const metadata: Metadata = {
   title: "Visit",
@@ -100,7 +101,7 @@ export default function VisitPage() {
 
       <div className="mx-auto flex max-w-site flex-col gap-16 px-4 sm:gap-24 sm:px-6 lg:px-8">
         {/* 1. Header */}
-        <header className="flex flex-col items-start gap-4">
+        <Reveal as="header" className="flex flex-col items-start gap-4" isHero={true}>
           <div className="flex items-center gap-2">
             <CoffeeCupWithSteam className="h-5 w-5 text-cafe-terracotta" />
             <span className="inline-block rounded-[2px] border border-cafe-border bg-cafe-cream-deep/80 px-3 py-1 text-[11px] font-semibold uppercase tracking-widest text-cafe-olive">
@@ -113,10 +114,10 @@ export default function VisitPage() {
           <p className="max-w-2xl text-base leading-relaxed text-cafe-espresso/85 sm:text-lg">
             Serving fresh brews and daily bakery items on {cafeConfig.address.street} in {cafeConfig.address.neighborhood}.
           </p>
-        </header>
+        </Reveal>
 
         {/* 2. Find us: Two column layout */}
-        <section aria-labelledby="find-us-heading">
+        <Reveal as="section" className="w-full">
           <h2 id="find-us-heading" className="sr-only">
             Find us
           </h2>
@@ -251,12 +252,12 @@ export default function VisitPage() {
               />
             </div>
           </div>
-        </section>
+        </Reveal>
 
         {/* 3. Reserve a table: Accessible form */}
-        <section
+        <Reveal
           id="reserve"
-          aria-labelledby="reserve-heading"
+          as="section"
           className="scroll-mt-28 border-t border-cafe-border pt-12 sm:pt-16"
         >
           <div className="flex flex-col gap-4 mb-8 max-w-2xl">
@@ -275,12 +276,12 @@ export default function VisitPage() {
           </div>
 
           <ReservationForm />
-        </section>
+        </Reveal>
 
         {/* 4. Events: Rendered only if upcoming events exist */}
         {upcomingEvents.length > 0 && (
-          <section
-            aria-labelledby="events-heading"
+          <Reveal
+            as="section"
             className="border-t border-cafe-border pt-12 sm:pt-16"
           >
             <div className="flex flex-col gap-8">
@@ -323,7 +324,7 @@ export default function VisitPage() {
                 ))}
               </div>
             </div>
-          </section>
+          </Reveal>
         )}
 
         {/* 5. Closing line */}

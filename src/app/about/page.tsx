@@ -4,7 +4,7 @@ import { teamMembers } from "@/data/team";
 import { Photo } from "@/components/Photo";
 import { BotanicalSprig } from "@/components/LineIllustrations";
 import { AnimatedButton } from "@/components/AnimatedButton";
-import { ScrollReveal } from "@/components/ScrollReveal";
+import { Reveal } from "@/components/Reveal";
 
 export const metadata: Metadata = {
   title: "About",
@@ -29,7 +29,7 @@ export default function AboutPage() {
       <div className="mx-auto flex max-w-site flex-col gap-16 px-4 sm:gap-24 sm:px-6 lg:px-8">
         {/* 1. Header */}
         <header className="flex flex-col items-start gap-4">
-          <ScrollReveal className="flex flex-col items-start gap-3">
+          <Reveal className="flex flex-col items-start gap-3" isHero={true}>
             <div className="flex items-center gap-2">
               <BotanicalSprig className="h-5 w-5 text-cafe-olive" />
               <span className="inline-block rounded-[2px] border border-cafe-border bg-cafe-cream-deep/80 px-3 py-1 text-[11px] font-semibold uppercase tracking-widest text-cafe-olive">
@@ -42,7 +42,7 @@ export default function AboutPage() {
             <p className="max-w-2xl text-base leading-relaxed text-cafe-espresso/85 sm:text-lg">
               {cafeConfig.aboutSentence}
             </p>
-          </ScrollReveal>
+          </Reveal>
         </header>
 
         {/* 2. Story: Two column editorial layout */}
@@ -50,7 +50,7 @@ export default function AboutPage() {
           <section aria-labelledby="story-heading">
             <div className="grid grid-cols-1 items-start gap-12 lg:grid-cols-12 lg:gap-14">
               {/* Left Column: Short paragraphs */}
-              <ScrollReveal className="flex flex-col gap-5 text-sm leading-relaxed text-cafe-espresso/85 sm:text-base lg:col-span-7">
+              <Reveal className="flex flex-col gap-5 text-sm leading-relaxed text-cafe-espresso/85 sm:text-base lg:col-span-7">
                 <h2 id="story-heading" className="sr-only">
                   Our Story
                 </h2>
@@ -68,11 +68,11 @@ export default function AboutPage() {
                     </p>
                   </div>
                 ) : null}
-              </ScrollReveal>
+              </Reveal>
 
               {/* Right Column: Tall photo slot */}
               <div className="lg:col-span-5">
-                <ScrollReveal delay={0.2}>
+                <Reveal delay={0.2} reverseDelay={0.1}>
                   <Photo
                     alt="Morning bread kneading and coffee grinding counter"
                     aspectRatio="3/4"
@@ -81,7 +81,7 @@ export default function AboutPage() {
                     illustration="sprig"
                     className="w-full"
                   />
-                </ScrollReveal>
+                </Reveal>
               </div>
             </div>
           </section>
@@ -90,7 +90,7 @@ export default function AboutPage() {
         {/* 3. How we make it: Definition list of concrete facts */}
         {cafeConfig.facts && cafeConfig.facts.length > 0 && (
           <section aria-labelledby="facts-heading">
-            <ScrollReveal className="flex flex-col gap-6 border-t border-cafe-border pt-12 sm:pt-16">
+            <Reveal className="flex flex-col gap-6 border-t border-cafe-border pt-12 sm:pt-16">
               <div>
                 <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-cafe-olive">
                   Sourcing & Methods
@@ -121,14 +121,14 @@ export default function AboutPage() {
                   </div>
                 ))}
               </dl>
-            </ScrollReveal>
+            </Reveal>
           </section>
         )}
 
         {/* 4. The people: Rendered only if entries exist */}
         {teamMembers && teamMembers.length > 0 && (
           <section aria-labelledby="team-heading">
-            <ScrollReveal className="flex flex-col gap-6 border-t border-cafe-border pt-12 sm:pt-16">
+            <Reveal className="flex flex-col gap-6 border-t border-cafe-border pt-12 sm:pt-16">
               <div>
                 <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-cafe-olive">
                   People
@@ -167,7 +167,7 @@ export default function AboutPage() {
                   </article>
                 ))}
               </div>
-            </ScrollReveal>
+            </Reveal>
           </section>
         )}
 
@@ -176,7 +176,7 @@ export default function AboutPage() {
           aria-labelledby="visit-closing-heading"
           className="rounded-[2px] border border-cafe-border bg-cafe-cream-deep/70 p-6 sm:p-10"
         >
-          <ScrollReveal className="flex flex-col items-start justify-between gap-8 lg:flex-row lg:items-center">
+          <Reveal className="flex flex-col items-start justify-between gap-8 lg:flex-row lg:items-center">
             <div className="flex flex-col gap-3 max-w-xl">
               <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-cafe-olive">
                 Join Us
@@ -208,7 +208,7 @@ export default function AboutPage() {
                 View our menu
               </AnimatedButton>
             </div>
-          </ScrollReveal>
+          </Reveal>
         </section>
       </div>
     </div>

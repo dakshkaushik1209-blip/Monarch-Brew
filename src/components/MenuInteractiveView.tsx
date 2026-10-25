@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { type MenuCategory, formatPrice } from "@/data/menu";
 import { Photo } from "@/components/Photo";
-import { ScrollReveal } from "@/components/ScrollReveal";
+import { Reveal } from "@/components/Reveal";
 import { THEME_COLORS } from "@/config/theme";
 
 interface MenuInteractiveViewProps {
@@ -184,7 +184,7 @@ export function MenuInteractiveView({ categories }: MenuInteractiveViewProps) {
           }
 
           return (
-            <ScrollReveal
+            <Reveal
               key={category.id}
               id={category.id}
               as="section"
@@ -302,7 +302,7 @@ export function MenuInteractiveView({ categories }: MenuInteractiveViewProps) {
                   </li>
                 ))}
               </ul>
-            </ScrollReveal>
+            </Reveal>
           );
         })}
       </div>

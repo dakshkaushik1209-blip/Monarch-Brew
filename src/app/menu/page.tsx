@@ -5,7 +5,7 @@ import { menuCategories } from "@/data/menu";
 import { MenuInteractiveView } from "@/components/MenuInteractiveView";
 import { CoffeeBeans, Croissant } from "@/components/LineIllustrations";
 import { AnimatedButton } from "@/components/AnimatedButton";
-import { ScrollReveal } from "@/components/ScrollReveal";
+import { Reveal } from "@/components/Reveal";
 
 const siteUrl = getSiteUrl();
 
@@ -71,7 +71,7 @@ export default function MenuPage() {
 
       {/* 1. Page Header (Screen) */}
       <header className="mx-auto max-w-site px-4 sm:px-6 lg:px-8 print-hidden print:hidden mb-12">
-        <ScrollReveal className="flex flex-col items-start gap-4">
+        <Reveal className="flex flex-col items-start gap-4" isHero={true}>
           <div className="flex items-center gap-3">
             <CoffeeBeans className="h-5 w-5 text-cafe-terracotta" />
             <span className="inline-block rounded-[2px] border border-cafe-border bg-cafe-cream-deep/80 px-3 py-1 text-[11px] font-semibold uppercase tracking-widest text-cafe-olive">
@@ -91,7 +91,7 @@ export default function MenuPage() {
           <p className="text-xs text-cafe-olive">
             Seasonal menu updated: {cafeConfig.legal.menuLastUpdated}
           </p>
-        </ScrollReveal>
+        </Reveal>
       </header>
 
       {/* 2 & 3 & 4. Category Tabs, Diet Filter, and Category Item Sections */}
@@ -102,7 +102,7 @@ export default function MenuPage() {
         aria-labelledby="allergen-note-heading"
         className="mx-auto mt-20 max-w-site px-4 sm:px-6 lg:px-8 print-hidden print:hidden"
       >
-        <ScrollReveal className="rounded-[2px] border border-cafe-border bg-cafe-cream-deep/70 p-6 sm:p-10">
+        <Reveal className="rounded-[2px] border border-cafe-border bg-cafe-cream-deep/70 p-6 sm:p-10">
           <div className="flex flex-col items-start justify-between gap-6 md:flex-row md:items-center">
             <div className="max-w-xl flex flex-col gap-2">
               <h2
@@ -125,7 +125,7 @@ export default function MenuPage() {
               </AnimatedButton>
             </div>
           </div>
-        </ScrollReveal>
+        </Reveal>
       </section>
     </div>
   );
