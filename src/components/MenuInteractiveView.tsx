@@ -5,6 +5,7 @@ import { type MenuCategory, formatPrice } from "@/data/menu";
 import { Photo } from "@/components/Photo";
 import { Reveal } from "@/components/Reveal";
 import { THEME_COLORS } from "@/config/theme";
+import { useOrderTray } from "@/components/OrderTrayContext";
 
 interface MenuInteractiveViewProps {
   categories: MenuCategory[];
@@ -16,6 +17,7 @@ interface MenuInteractiveViewProps {
  * interactive row hover shift, and accessible dietary filters.
  */
 export function MenuInteractiveView({ categories }: MenuInteractiveViewProps) {
+  const { addItem } = useOrderTray();
   const [activeCategory, setActiveCategory] = useState<string>(categories[0]?.id || "");
   const [selectedDiet, setSelectedDiet] = useState<"all" | "veg">("all");
   const [announcement, setAnnouncement] = useState<string>("");
@@ -268,9 +270,22 @@ export function MenuInteractiveView({ categories }: MenuInteractiveViewProps) {
                             className="min-w-6 flex-1 -translate-y-1 border-b border-dotted border-cafe-border transition-colors duration-200 group-hover:border-cafe-terracotta/50"
                           />
 
-                          <span className="font-heading text-base font-semibold text-cafe-espresso transition-colors duration-200 group-hover:text-cafe-terracotta tabular-nums sm:text-lg">
-                            {formatPrice(item.price)}
-                          </span>
+                          <div className="flex items-center gap-2.5">
+                            <span className="font-heading text-base font-semibold text-cafe-espresso transition-colors duration-200 group-hover:text-cafe-terracotta tabular-nums sm:text-lg">
+                              {formatPrice(item.price)}
+                            </span>
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                addItem(item);
+                              }}
+                              aria-label={`Add ${item.name} to order tray`}
+                              className="rounded-[2px] border border-cafe-border bg-cafe-cream px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-cafe-espresso shadow-2xs transition-colors hover:border-cafe-terracotta hover:bg-cafe-terracotta hover:text-cafe-cream focus-visible:outline-2 focus-visible:outline-cafe-espresso"
+                            >
+                              + Add
+                            </button>
+                          </div>
                         </div>
 
                         {/* Description */}

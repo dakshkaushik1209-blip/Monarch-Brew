@@ -45,7 +45,7 @@ async function runReversibleTests() {
 
     for (const route of ROUTES) {
       const url = `${BASE_URL}${route.path}`;
-      await page.goto(url, { waitUntil: "networkidle" });
+      await page.goto(url, { waitUntil: "domcontentloaded" });
 
       // 1. Check Horizontal Overflow
       const overflow = await page.evaluate(() => {
@@ -163,7 +163,7 @@ async function runReversibleTests() {
     }
 
     // 5. Anchor Jump (/visit#reserve)
-    await page.goto(`${BASE_URL}/visit#reserve`, { waitUntil: "networkidle" });
+    await page.goto(`${BASE_URL}/visit#reserve`, { waitUntil: "domcontentloaded" });
     await page.waitForTimeout(100);
     const anchorCheck = await page.evaluate(() => {
       const reserveSection = document.getElementById("reserve");
@@ -177,7 +177,7 @@ async function runReversibleTests() {
 
     // 6. Mid-Page Refresh
     await page.evaluate(() => window.scrollTo(0, 600));
-    await page.reload({ waitUntil: "networkidle" });
+    await page.reload({ waitUntil: "domcontentloaded" });
     await page.waitForTimeout(150);
     const refreshCheck = await page.evaluate(() => {
       const scrollY = window.scrollY;
@@ -191,11 +191,11 @@ async function runReversibleTests() {
     results.midPageRefresh.push(`Mid-page Refresh (${width}px): scrollY=${refreshCheck.scrollY}, ${refreshCheck.visibleCount}/${refreshCheck.inViewCount} visible immediately`);
 
     // 7. Back Button with Scroll Restoration
-    await page.goto(`${BASE_URL}/menu`, { waitUntil: "networkidle" });
+    await page.goto(`${BASE_URL}/menu`, { waitUntil: "domcontentloaded" });
     await page.evaluate(() => window.scrollTo(0, 500));
     await page.waitForTimeout(100);
-    await page.goto(`${BASE_URL}/about`, { waitUntil: "networkidle" });
-    await page.goBack({ waitUntil: "networkidle" });
+    await page.goto(`${BASE_URL}/about`, { waitUntil: "domcontentloaded" });
+    await page.goBack({ waitUntil: "domcontentloaded" });
     await page.waitForTimeout(150);
     const backCheck = await page.evaluate(() => {
       const scrollY = window.scrollY;
@@ -218,7 +218,7 @@ async function runReversibleTests() {
     reducedMotion: "reduce",
   });
   for (const route of ROUTES) {
-    await reducedMotionPage.goto(`${BASE_URL}${route.path}`, { waitUntil: "networkidle" });
+    await reducedMotionPage.goto(`${BASE_URL}${route.path}`, { waitUntil: "domcontentloaded" });
     const hiddenElements = await reducedMotionPage.evaluate(() => {
       const allText = Array.from(document.querySelectorAll("h1, h2, h3, p, a, button, section"));
       return allText.filter((el) => {

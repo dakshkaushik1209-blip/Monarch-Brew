@@ -3,6 +3,7 @@ import { cafeConfig } from "@/config/cafe";
 import { getSiteUrl } from "@/config/site";
 import { menuCategories } from "@/data/menu";
 import { MenuInteractiveView } from "@/components/MenuInteractiveView";
+import { BrewCalculator } from "@/components/BrewCalculator";
 import { CoffeeBeans, Croissant } from "@/components/LineIllustrations";
 import { AnimatedButton } from "@/components/AnimatedButton";
 import { Reveal } from "@/components/Reveal";
@@ -96,6 +97,16 @@ export default function MenuPage() {
 
       {/* 2 & 3 & 4. Category Tabs, Diet Filter, and Category Item Sections */}
       <MenuInteractiveView categories={menuCategories} />
+
+      {/* 4.5 Interactive Brew Ratio & Pour Calculator */}
+      <section
+        aria-labelledby="brew-calculator-heading"
+        className="mx-auto mt-16 max-w-site px-4 sm:px-6 lg:px-8 print-hidden print:hidden"
+      >
+        <Reveal>
+          <BrewCalculator />
+        </Reveal>
+      </section>
 
       {/* 5. Bottom Allergen Note Block */}
       <section

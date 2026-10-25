@@ -1,10 +1,14 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import { MapPin, Clock, Phone, ArrowUpRight, ArrowRight } from "lucide-react";
 import { cafeConfig } from "@/config/cafe";
 import { popularItems, formatPrice } from "@/data/menu";
 import { Photo } from "@/components/Photo";
 import { AnimatedButton, AnimatedLink } from "@/components/AnimatedButton";
 import { CoffeeCupWithSteam, CoffeeBeans, BotanicalSprig } from "@/components/LineIllustrations";
+import { BarLiveRhythm } from "@/components/BarLiveRhythm";
+import { CoffeeMatchmaker } from "@/components/CoffeeMatchmaker";
+import { HeroVisual } from "@/components/HeroVisual";
 import { Reveal, ImageReveal, TextReveal } from "@/components/Reveal";
 import { StaggerContainer, StaggerItem } from "@/components/TextReveal";
 
@@ -28,82 +32,96 @@ export default function HomePage() {
 
   return (
     <div className="flex flex-col">
-      {/* 1. Hero Section: Asymmetric layout with animated typography & steaming cup */}
+      {/* 1. Hero Section: High-energy Coffeelo-inspired hero */}
       <section
         aria-labelledby="hero-heading"
         className="w-full bg-cafe-cream py-12 sm:py-20 lg:py-24"
       >
         <div className="mx-auto max-w-site px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-12 lg:gap-12">
+          <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-12 lg:gap-12">
             {/* Left Column: Heading, hours, buttons */}
             <div className="flex flex-col items-start gap-6 lg:col-span-7">
-              {/* Steaming cup line illustration */}
+              {/* Steaming cup line illustration & badge */}
               <div className="flex items-center gap-3">
-                <CoffeeCupWithSteam className="h-12 w-12 text-cafe-terracotta" />
+                <CoffeeCupWithSteam className="h-10 w-10 text-cafe-terracotta" />
                 <span className="inline-block rounded-[2px] border border-cafe-border bg-cafe-cream-deep/80 px-3 py-1 text-[11px] font-semibold uppercase tracking-widest text-cafe-olive">
                   {cafeConfig.address.neighborhood}
                 </span>
               </div>
 
-              {/* Masked Hero Title with natural italic contrast word */}
-              <TextReveal as="h1" className="w-full" isHero={true}>
-                <span
-                  id="hero-heading"
-                  className="block font-heading text-4xl font-semibold tracking-tight text-cafe-espresso sm:text-5xl lg:text-6xl lg:leading-[1.12]"
-                >
-                  Filter coffee and fresh <em className="font-normal italic text-cafe-terracotta">bakes</em> on {cafeConfig.address.street}
+              {/* Chunky playful headline with angled kicker */}
+              <div className="flex flex-col items-start gap-2">
+                <span className="inline-block -rotate-2 font-heading text-lg font-bold italic tracking-wide text-cafe-terracotta sm:text-2xl">
+                  An Elevated Brew Routine
                 </span>
-              </TextReveal>
+                <TextReveal as="h1" className="w-full" isHero={true}>
+                  <span
+                    id="hero-heading"
+                    className="block font-heading text-5xl font-black tracking-tight text-cafe-espresso sm:text-6xl lg:text-7xl lg:leading-[1.08]"
+                  >
+                    Coffee <span className="text-cafe-terracotta">Experience</span>
+                  </span>
+                </TextReveal>
+              </div>
 
               <StaggerContainer className="flex flex-col gap-6" delayChildren={0.2}>
                 <StaggerItem>
-                  <p className="max-w-xl text-base leading-relaxed text-cafe-espresso/85 sm:text-lg">
-                    {cafeConfig.hours.summary} {cafeConfig.description}
-                  </p>
+                  <div className="flex flex-col gap-1 border-l-2 border-cafe-terracotta/70 pl-4 py-0.5">
+                    <span className="text-xs font-bold uppercase tracking-wider text-cafe-espresso">
+                      Single-Origin Specialty
+                    </span>
+                    <p className="max-w-xl text-sm leading-relaxed text-cafe-espresso/85 sm:text-base">
+                      Ethical Karnataka estate beans slow roasted in small batches. Sourdough bakes sliced warm from 7:30 AM on {cafeConfig.address.street}.
+                    </p>
+                  </div>
                 </StaggerItem>
 
                 <StaggerItem>
                   <div className="flex flex-wrap items-center gap-4 pt-2">
                     <AnimatedButton href="/menu" variant="primary">
-                      See the menu
+                      Explore the menu
                     </AnimatedButton>
 
                     <AnimatedButton href="/visit" variant="secondary">
-                      Find us
+                      Visit the bar
                     </AnimatedButton>
                   </div>
                 </StaggerItem>
               </StaggerContainer>
             </div>
 
-            {/* Right Column: Overlapping photo slots with soft scale entrance */}
-            <div className="relative mx-auto w-full max-w-md lg:col-span-5 lg:max-w-none">
-              <ImageReveal delay={0.25} isHero={true}>
-                {/* Primary large portrait slot */}
-                <div className="w-full sm:w-5/6">
-                  <Photo
-                    alt="Main espresso counter and morning prep"
-                    aspectRatio="3/4"
-                    label="Front espresso counter"
-                    priority
-                    illustration="cup"
-                    className="shadow-sm"
-                  />
-                </div>
+            {/* Right Column: Hero Iced Coffee Splash Visual with magnetic hover & interactive badge */}
+            <div className="relative mx-auto flex w-full max-w-md items-center justify-center lg:col-span-5 lg:max-w-none">
+              <ImageReveal delay={0.2} isHero={true}>
+                <HeroVisual />
               </ImageReveal>
-
-              {/* Smaller secondary landscape slot tucked at bottom corner with subtle 1.5 deg rotation */}
-              <div className="mt-4 sm:absolute sm:bottom-4 sm:right-0 sm:mt-0 sm:w-3/5 sm:rotate-[1.5deg] transition-transform duration-300 hover:rotate-0">
-                <Photo
-                  alt="Freshly baked sourdough and laminated pastries"
-                  aspectRatio="4/3"
-                  label="Fresh morning bakes"
-                  illustration="beans"
-                  className="border-2 border-cafe-cream shadow-md"
-                />
-              </div>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* 1.5 Bar Live Rhythm & Daily Brewing Status */}
+      <section
+        aria-labelledby="live-rhythm-heading"
+        className="w-full border-y border-cafe-border bg-cafe-cream-deep/40 py-6 sm:py-8"
+      >
+        <div className="mx-auto max-w-site px-4 sm:px-6 lg:px-8">
+          <Reveal>
+            <BarLiveRhythm />
+          </Reveal>
+        </div>
+      </section>
+
+      {/* 1.8 Taste Matchmaker (Find your morning brew & bake combo in 3 taps) */}
+      <section
+        id="taste-matchmaker"
+        aria-labelledby="taste-matchmaker-heading"
+        className="w-full bg-cafe-cream py-10 sm:py-14"
+      >
+        <div className="mx-auto max-w-site px-4 sm:px-6 lg:px-8">
+          <Reveal>
+            <CoffeeMatchmaker />
+          </Reveal>
         </div>
       </section>
 
@@ -232,6 +250,18 @@ export default function HomePage() {
               </Reveal>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* 3.5 Interactive Taste Matchmaker */}
+      <section
+        aria-labelledby="matchmaker-heading"
+        className="w-full bg-cafe-cream pb-16 sm:pb-24"
+      >
+        <div className="mx-auto max-w-site px-4 sm:px-6 lg:px-8">
+          <Reveal>
+            <CoffeeMatchmaker />
+          </Reveal>
         </div>
       </section>
 

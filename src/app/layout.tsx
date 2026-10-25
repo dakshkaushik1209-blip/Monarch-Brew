@@ -3,6 +3,8 @@ import { Fraunces, DM_Sans } from "next/font/google";
 import "./globals.css";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
+import { OrderTrayProvider } from "@/components/OrderTrayContext";
+import { OrderTray } from "@/components/OrderTray";
 import { cafeConfig } from "@/config/cafe";
 import { getSiteUrl } from "@/config/site";
 
@@ -67,11 +69,14 @@ export default function RootLayout({
         >
           Skip to main content
         </a>
-        <Navbar />
-        <main id="main-content" tabIndex={-1} className="flex-1 outline-none">
-          {children}
-        </main>
-        <Footer />
+        <OrderTrayProvider>
+          <Navbar />
+          <main id="main-content" tabIndex={-1} className="flex-1 outline-none">
+            {children}
+          </main>
+          <Footer />
+          <OrderTray />
+        </OrderTrayProvider>
       </body>
     </html>
   );

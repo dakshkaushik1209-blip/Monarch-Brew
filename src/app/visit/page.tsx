@@ -4,6 +4,7 @@ import { MapPin, Phone, Mail, MessageCircle } from "lucide-react";
 import { cafeConfig } from "@/config/cafe";
 import { cafeEvents } from "@/data/events";
 import { Photo } from "@/components/Photo";
+import { CopyPill } from "@/components/CopyPill";
 import { ClickToLoadMap } from "@/components/ClickToLoadMap";
 import { ReservationForm } from "@/components/ReservationForm";
 import { OpeningHoursTable } from "@/components/OpeningHoursTable";
@@ -133,7 +134,9 @@ export default function VisitPage() {
                 <div className="flex items-start gap-3 text-sm text-cafe-espresso">
                   <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-cafe-terracotta" aria-hidden="true" />
                   <div>
-                    <p className="font-semibold text-cafe-espresso">{cafeConfig.address.street}</p>
+                    <CopyPill textToCopy={fullAddressString} label="Copy address to clipboard">
+                      <span className="font-semibold text-cafe-espresso">{cafeConfig.address.street}</span>
+                    </CopyPill>
                     <p>
                       {cafeConfig.address.city}, {cafeConfig.address.postcode}
                     </p>
@@ -162,12 +165,11 @@ export default function VisitPage() {
                 <div className="flex flex-col gap-2 text-sm text-cafe-espresso">
                   <div className="flex items-center gap-3">
                     <Phone className="h-4 w-4 shrink-0 text-cafe-terracotta" aria-hidden="true" />
-                    <a
-                      href={`tel:${cafeConfig.contact.phone}`}
-                      className="inline-block py-1 transition-colors duration-short hover:text-cafe-terracotta hover:underline"
-                    >
-                      {cafeConfig.contact.phone}
-                    </a>
+                    <CopyPill textToCopy={cafeConfig.contact.phone} label="Copy phone number">
+                      <span className="inline-block py-1 transition-colors duration-short hover:text-cafe-terracotta">
+                        {cafeConfig.contact.phone}
+                      </span>
+                    </CopyPill>
                   </div>
 
                   <div className="flex items-center gap-3">

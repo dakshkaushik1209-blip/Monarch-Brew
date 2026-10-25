@@ -3,9 +3,10 @@
 import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu as MenuIcon, X as CloseIcon } from "lucide-react";
+import { Menu as MenuIcon, X as CloseIcon, Receipt } from "lucide-react";
 import { cafeConfig } from "@/config/cafe";
 import { AnimatedButton } from "./AnimatedButton";
+import { useOrderTray } from "./OrderTrayContext";
 
 /**
  * Sticky Navbar adapted from 21st.dev Sticky Header (id: 23562).
@@ -14,6 +15,7 @@ import { AnimatedButton } from "./AnimatedButton";
 export function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const { totalCount, totalPrice, openTray } = useOrderTray();
   const pathname = usePathname();
   const menuButtonRef = useRef<HTMLButtonElement>(null);
   const firstLinkRef = useRef<HTMLAnchorElement>(null);
@@ -114,6 +116,19 @@ export function Navbar() {
 
         {/* Action Button & Mobile Toggle */}
         <div className="flex items-center gap-3">
+          {totalCount > 0 && (
+            <button
+              type="button"
+              onClick={openTray}
+              aria-label={`View counter order tray: ${totalCount} items, total ₹${totalPrice}`}
+              className="inline-flex items-center gap-1.5 rounded-[2px] border border-cafe-terracotta/40 bg-cafe-cream-deep px-2.5 py-1.5 text-xs font-semibold text-cafe-espresso transition-all duration-short hover:border-cafe-terracotta hover:bg-cafe-cream focus-visible:outline-2 focus-visible:outline-cafe-terracotta"
+            >
+              <Receipt className="h-3.5 w-3.5 text-cafe-terracotta" aria-hidden="true" />
+              <span className="tabular-nums">Tray ({totalCount})</span>
+              <span className="hidden font-mono text-[11px] text-cafe-olive lg:inline tabular-nums">· ₹{totalPrice}</span>
+            </button>
+          )}
+
           <AnimatedButton
             href="/visit#reserve"
             variant="primary"
@@ -177,6 +192,24 @@ export function Navbar() {
           </div>
 
           <div className="flex flex-col gap-4 border-t border-cafe-border/80 pt-6">
+            {totalCount > 0 && (
+              <button
+                type="button"
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  openTray();
+                }}
+                className="flex w-full items-center justify-between rounded-[2px] border border-cafe-border bg-cafe-cream-deep px-4 py-3 text-sm font-semibold text-cafe-espresso transition-colors hover:bg-cafe-cream"
+              >
+                <span className="flex items-center gap-2">
+                  <Receipt className="h-4 w-4 text-cafe-terracotta" aria-hidden="true" />
+                  <span>View Counter Order Tray</span>
+                </span>
+                <span className="font-mono text-xs text-cafe-olive tabular-nums">
+                  {totalCount} items · ₹{totalPrice}
+                </span>
+              </button>
+            )}
             <div className="text-xs text-cafe-espresso/80">
               <p className="font-semibold text-cafe-espresso">{cafeConfig.address.street}</p>
               <p>{cafeConfig.hours.weekday}</p>
