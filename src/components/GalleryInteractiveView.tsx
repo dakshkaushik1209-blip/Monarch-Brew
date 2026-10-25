@@ -240,7 +240,7 @@ export function GalleryInteractiveView({ items }: GalleryInteractiveViewProps) {
           e.preventDefault();
           closeLightbox();
         }}
-        className="fixed inset-0 z-50 m-auto flex h-full w-full max-h-screen max-w-screen items-center justify-center bg-transparent p-4 backdrop:bg-cafe-espresso/80 backdrop:backdrop-blur-sm"
+        className="fixed inset-0 z-50 m-auto hidden open:flex h-full w-full max-h-screen max-w-screen items-center justify-center bg-transparent p-4 backdrop:bg-cafe-espresso/80"
       >
         {activePhoto && (
           <div

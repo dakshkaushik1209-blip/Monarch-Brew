@@ -262,28 +262,28 @@ async function runReversibleTests() {
   }
 
   console.log("\n2. Slow Scroll Down (Reveal):");
-  results.slowScrollDown.forEach((r) => console.log("  ✓ " + r));
+  results.slowScrollDown.forEach((r) => console.log("  [PASS] " + r));
 
   console.log("\n3. Slow Scroll Up (Reversible Exit through Bottom & Persistent Top):");
-  results.slowScrollUp.forEach((r) => console.log("  ✓ " + r));
+  results.slowScrollUp.forEach((r) => console.log("  [PASS] " + r));
 
   console.log("\n4. Fast Scroll (Visible within 300ms, no blank screen):");
-  results.fastScroll.forEach((r) => console.log("  ✓ " + r));
+  results.fastScroll.forEach((r) => console.log("  [PASS] " + r));
 
   console.log("\n5. Anchor Jumps (/visit#reserve instant visible):");
-  results.anchorJump.forEach((r) => console.log("  ✓ " + r));
+  results.anchorJump.forEach((r) => console.log("  [PASS] " + r));
 
   console.log("\n6. Mid-Page Refresh:");
-  results.midPageRefresh.forEach((r) => console.log("  ✓ " + r));
+  results.midPageRefresh.forEach((r) => console.log("  [PASS] " + r));
 
   console.log("\n7. Back Button Scroll Restoration:");
-  results.backButton.forEach((r) => console.log("  ✓ " + r));
+  results.backButton.forEach((r) => console.log("  [PASS] " + r));
 
   console.log("\n8. Prefers-Reduced-Motion (0 hidden expected):");
-  results.reducedMotion.forEach((r) => console.log("  ✓ " + r));
+  results.reducedMotion.forEach((r) => console.log("  [PASS] " + r));
 
   console.log("\n9. No-JavaScript Fallback (0 hidden expected):");
-  results.noJs.forEach((r) => console.log("  ✓ " + r));
+  results.noJs.forEach((r) => console.log("  [PASS] " + r));
   console.log("========================================================\n");
 
   const overflowFailed = results.overflows.length > 0;

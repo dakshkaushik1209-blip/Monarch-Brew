@@ -13,6 +13,8 @@ export interface GalleryItem {
   category: GalleryCategory;
   label: string;
   aspectRatio: PhotoAspectRatio;
+  rotation?: number;
+  caption?: string;
 }
 
 export const galleryCategories: GalleryCategory[] = [
@@ -24,43 +26,51 @@ export const galleryCategories: GalleryCategory[] = [
 export const galleryItems: GalleryItem[] = [
   {
     id: "photo-1",
-    src: "",
+    src: "/images/gallery/espresso-bar.png",
     alt: "Front espresso bar counter with copper portafilters and wooden counter seating",
-    width: 1200,
-    height: 800,
+    width: 800,
+    height: 600,
     category: "Interior",
     label: "Front espresso bar counter",
-    aspectRatio: "3/2",
+    caption: "Morning pull on the two-group copper lever machine",
+    rotation: -2.5,
+    aspectRatio: "4/3",
   },
   {
     id: "photo-2",
-    src: "",
+    src: "/images/gallery/sourdough-loaf.png",
     alt: "Freshly sliced sourdough country loaf on wooden baker board",
-    width: 900,
-    height: 1200,
+    width: 600,
+    height: 800,
     category: "Food and drinks",
     label: "Country sourdough loaf",
+    caption: "Naturally leavened country loaf sliced warm at 7:30 am",
+    rotation: 2,
     aspectRatio: "3/4",
   },
   {
     id: "photo-3",
-    src: "",
+    src: "/images/gallery/pour-over.png",
     alt: "Morning filter coffee manual pour over service in ceramic cup",
-    width: 1200,
-    height: 900,
+    width: 800,
+    height: 600,
     category: "Food and drinks",
     label: "Filter coffee brew service",
+    caption: "Single-origin filter brew dripped into heat-retaining glass",
+    rotation: -1.5,
     aspectRatio: "4/3",
   },
   {
     id: "photo-4",
-    src: "",
+    src: "/images/gallery/window-table.png",
     alt: "Sunlit wood table beside wide floor-to-ceiling glass window",
-    width: 1200,
-    height: 675,
+    width: 800,
+    height: 600,
     category: "Interior",
     label: "Window seating table",
-    aspectRatio: "16/9",
+    caption: "Corner reading table caught in 8:00 am southern light",
+    rotation: 3,
+    aspectRatio: "4/3",
   },
   {
     id: "photo-5",
@@ -84,13 +94,15 @@ export const galleryItems: GalleryItem[] = [
   },
   {
     id: "photo-7",
-    src: "",
+    src: "/images/gallery/courtyard.png",
     alt: "Rear courtyard patio with terracotta potted trees and stone pavers",
-    width: 1200,
-    height: 800,
+    width: 800,
+    height: 600,
     category: "Interior",
     label: "Rear courtyard seating",
-    aspectRatio: "3/2",
+    caption: "Limestone paving and potted olive canopy in rear courtyard",
+    rotation: -3,
+    aspectRatio: "4/3",
   },
   {
     id: "photo-8",
