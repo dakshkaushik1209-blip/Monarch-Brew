@@ -11,11 +11,13 @@ interface ButtonProps {
   variant?: "primary" | "secondary" | "dark";
   className?: string;
   ariaLabel?: string;
+  showArrow?: boolean;
 }
 
 /**
  * Rectangular button (4px radius max, no pill buttons, no gradients)
- * with a flat color slide fill on hover, adapted from 21st.dev Button Animated.
+ * with a flat color slide fill on hover (transform 250ms, ease-out-craft),
+ * 4px arrow nudge, and pressed scale 0.98 feedback.
  */
 export function AnimatedButton({
   children,
@@ -25,10 +27,11 @@ export function AnimatedButton({
   variant = "primary",
   className = "",
   ariaLabel,
+  showArrow = false,
 }: ButtonProps) {
   // Variant styles
   const baseClasses =
-    "group relative inline-flex items-center justify-center overflow-hidden rounded-[2px] px-6 py-3 text-xs font-semibold tracking-wider uppercase transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cafe-terracotta focus-visible:ring-offset-2";
+    "group relative inline-flex items-center justify-center overflow-hidden rounded-[2px] px-6 py-3 text-xs font-semibold tracking-wider uppercase transition-[color,transform] duration-base ease-out-craft active:scale-[0.98] motion-reduce:active:scale-100 motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cafe-terracotta focus-visible:ring-offset-2";
 
   let colorClasses = "";
   let slideOverlayColor = "";
@@ -49,13 +52,29 @@ export function AnimatedButton({
 
   const content = (
     <>
-      {/* Flat sliding color overlay (slides from left to right) */}
+      {/* Flat sliding color overlay (slides from left to right: transform 250ms) */}
       <span
         aria-hidden="true"
-        className={`absolute inset-0 -translate-x-full transition-transform duration-300 ease-out group-hover:translate-x-0 ${slideOverlayColor}`}
+        className={`absolute inset-0 -translate-x-full transition-transform duration-base ease-out-craft group-hover:translate-x-0 motion-reduce:hidden ${slideOverlayColor}`}
       />
-      {/* Button label text sitting above overlay */}
-      <span className="relative z-10 flex items-center gap-2">{children}</span>
+      {/* Button label text sitting above overlay with optional 4px nudging arrow */}
+      <span className="relative z-10 flex items-center gap-2">
+        <span>{children}</span>
+        {showArrow && (
+          <svg
+            viewBox="0 0 16 16"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="h-3.5 w-3.5 transition-transform duration-base ease-out-craft group-hover:translate-x-1"
+            aria-hidden="true"
+          >
+            <path d="M3 8h10M9 4l4 4-4 4" />
+          </svg>
+        )}
+      </span>
     </>
   );
 
@@ -105,7 +124,7 @@ export function AnimatedLink({
       {/* Underline draw animation */}
       <span
         aria-hidden="true"
-        className="absolute bottom-0 left-0 h-[1.5px] w-full origin-left scale-x-0 bg-cafe-terracotta transition-transform duration-300 ease-out group-hover:scale-x-100"
+        className="absolute bottom-0 left-0 h-[1.5px] w-full origin-left scale-x-0 bg-cafe-terracotta transition-transform duration-base ease-out-craft group-hover:scale-x-100"
       />
     </>
   );

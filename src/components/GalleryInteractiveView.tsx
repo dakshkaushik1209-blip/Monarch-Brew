@@ -14,6 +14,7 @@ interface GalleryInteractiveViewProps {
 export function GalleryInteractiveView({ items }: GalleryInteractiveViewProps) {
   const [selectedCategory, setSelectedCategory] = useState<string>("All");
   const [activePhotoIndex, setActivePhotoIndex] = useState<number | null>(null);
+  const [hoveredAccordionIdx, setHoveredAccordionIdx] = useState<number | null>(0);
   const [announcement, setAnnouncement] = useState<string>("");
   const [forcePreview, setForcePreview] = useState<boolean>(false);
 
@@ -30,13 +31,11 @@ export function GalleryInteractiveView({ items }: GalleryInteractiveViewProps) {
     }
   }, []);
 
-  // Categories that actually exist in the data
   const availableCategories = [
     "All",
     ...Array.from(new Set(items.map((i) => i.category))),
   ];
 
-  // Filter items
   const visibleItems = items.filter((item) => {
     if (selectedCategory === "All") return true;
     return item.category === selectedCategory;
@@ -44,6 +43,7 @@ export function GalleryInteractiveView({ items }: GalleryInteractiveViewProps) {
 
   const handleCategoryChange = (category: string) => {
     setSelectedCategory(category);
+    setHoveredAccordionIdx(0);
     const count = category === "All"
       ? items.length
       : items.filter((i) => i.category === category).length;
@@ -87,7 +87,6 @@ export function GalleryInteractiveView({ items }: GalleryInteractiveViewProps) {
     });
   }, [activePhotoIndex, visibleItems.length]);
 
-  // Keyboard navigation within lightbox
   useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
       if (activePhotoIndex === null) return;
@@ -112,18 +111,16 @@ export function GalleryInteractiveView({ items }: GalleryInteractiveViewProps) {
     };
   }, [activePhotoIndex, closeLightbox, showPrevious, showNext]);
 
-  // Clean up body overflow on unmount
   useEffect(() => {
     return () => {
       document.body.style.overflow = "";
     };
   }, []);
 
-  // Production check: If in production and no photos have real src, render a plain sentence
   if (!isDev && !hasRealPhotos && !forcePreview) {
     return (
       <div className="mx-auto max-w-site px-4 py-8 sm:px-6 lg:px-8">
-        <div className="rounded border border-cafe-border bg-cafe-cream-deep/40 p-8 text-sm text-cafe-espresso/85">
+        <div className="rounded-[2px] border border-cafe-border bg-cafe-cream-deep/40 p-8 text-sm text-cafe-espresso/85">
           <p>
             Photographs of our space, bakes, and daily coffee service will be published here shortly.
           </p>
@@ -142,7 +139,7 @@ export function GalleryInteractiveView({ items }: GalleryInteractiveViewProps) {
   const activePhoto = activePhotoIndex !== null ? visibleItems[activePhotoIndex] : null;
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col gap-10">
       {/* Screen reader live announcement */}
       <div aria-live="polite" aria-atomic="true" className="sr-only">
         {announcement}
@@ -162,7 +159,7 @@ export function GalleryInteractiveView({ items }: GalleryInteractiveViewProps) {
                 type="button"
                 onClick={() => handleCategoryChange(category)}
                 aria-pressed={isActive}
-                className={`whitespace-nowrap px-3 py-2 text-xs font-semibold uppercase tracking-wider transition-colors duration-short focus-visible:outline-2 focus-visible:outline-cafe-espresso ${
+                className={`inline-flex min-h-[44px] items-center whitespace-nowrap px-3.5 py-2 text-xs font-semibold uppercase tracking-wider transition-colors duration-fast focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cafe-terracotta active:scale-[0.98] motion-reduce:active:scale-100 ${
                   isActive
                     ? "border-b-2 border-cafe-terracotta text-cafe-terracotta"
                     : "border-b-2 border-transparent text-cafe-espresso/75 hover:text-cafe-terracotta"
@@ -175,10 +172,71 @@ export function GalleryInteractiveView({ items }: GalleryInteractiveViewProps) {
         </nav>
       </div>
 
-      {/* Uneven Photo Grid */}
+      {/* Desktop Image Accordion (Visible on screens >= lg) */}
+      <div className="hidden lg:block w-full">
+        <div className="mb-3 flex items-center justify-between text-xs text-cafe-olive">
+          <span>Featured records (Hover or focus to expand)</span>
+          <span className="tabular-nums">{visibleItems.length} photographs</span>
+        </div>
+
+        <div className="flex h-[460px] w-full gap-2.5 overflow-hidden rounded-[2px]">
+          {visibleItems.slice(0, 5).map((item, index) => {
+            const isExpanded = (hoveredAccordionIdx ?? 0) === index;
+            return (
+              <button
+                key={item.id}
+                type="button"
+                onMouseEnter={() => setHoveredAccordionIdx(index)}
+                onFocus={() => setHoveredAccordionIdx(index)}
+                onClick={(e) => openLightbox(index, e.currentTarget)}
+                aria-label={`Expand and view photo: ${item.alt}`}
+                style={{
+                  flex: isExpanded ? 3.5 : 1,
+                }}
+                className="group relative h-full overflow-hidden rounded-[2px] border border-cafe-border bg-cafe-cream-deep/30 transition-[flex] duration-400 ease-out-craft motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cafe-terracotta text-left"
+              >
+                {item.src ? (
+                  <Image
+                    src={item.src}
+                    alt={item.alt}
+                    fill
+                    sizes="(max-width: 1200px) 50vw, 33vw"
+                    className="object-cover transition-transform duration-500 ease-out group-hover:scale-105"
+                  />
+                ) : (
+                  <div className="h-full w-full">
+                    <Photo
+                      src={item.src}
+                      alt={item.alt}
+                      aspectRatio="3/4"
+                      label={item.label}
+                      className="h-full w-full"
+                    />
+                  </div>
+                )}
+
+                {/* Overlay vignette caption */}
+                <div
+                  className={`absolute inset-x-0 bottom-0 bg-cafe-espresso/90 p-4 text-cafe-cream transition-opacity duration-base ${
+                    isExpanded ? "opacity-100" : "opacity-0 pointer-events-none"
+                  }`}
+                >
+                  <span className="block font-heading text-sm font-semibold tracking-tight">
+                    {item.label}
+                  </span>
+                  <span className="mt-0.5 block text-[11px] text-cafe-cream/70">
+                    {item.alt}
+                  </span>
+                </div>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Grid Layout (Full archive, and default mobile layout) */}
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-12">
         {visibleItems.map((item, index) => {
-          // Asymmetric column spans to prevent equal square thumbnails
           const colSpan =
             item.aspectRatio === "16/9"
               ? "sm:col-span-2 lg:col-span-8"
@@ -199,17 +257,14 @@ export function GalleryInteractiveView({ items }: GalleryInteractiveViewProps) {
                 type="button"
                 onClick={(e) => openLightbox(index, e.currentTarget)}
                 aria-label={`Open photo view: ${item.alt}`}
-                className="group block w-full text-left focus-visible:outline-2 focus-visible:outline-cafe-espresso rounded"
+                className="group block w-full text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cafe-terracotta rounded-[2px] active:scale-[0.98] motion-reduce:active:scale-100"
               >
                 {item.src ? (
-                  <div
-                    className={`relative overflow-hidden rounded border border-cafe-border bg-cafe-cream-deep transition-opacity duration-short group-hover:opacity-90 aspect-[${item.width}/${item.height}]`}
-                  >
+                  <div className="relative aspect-[4/3] overflow-hidden rounded-[2px] border border-cafe-border bg-cafe-cream-deep/40 transition-opacity duration-fast group-hover:opacity-90">
                     <Image
                       src={item.src}
                       alt={item.alt}
-                      width={item.width}
-                      height={item.height}
+                      fill
                       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                       loading={index < 4 ? "eager" : "lazy"}
                       className="object-cover w-full h-full transition-transform duration-500 ease-out group-hover:scale-[1.03]"
@@ -217,6 +272,7 @@ export function GalleryInteractiveView({ items }: GalleryInteractiveViewProps) {
                   </div>
                 ) : (
                   <Photo
+                    src={item.src}
                     alt={item.alt}
                     aspectRatio={item.aspectRatio}
                     label={item.label}
@@ -224,7 +280,7 @@ export function GalleryInteractiveView({ items }: GalleryInteractiveViewProps) {
                     className="w-full"
                   />
                 )}
-                <span className="mt-1.5 block text-xs text-cafe-espresso/70">
+                <span className="mt-2 block text-xs font-medium text-cafe-espresso/80">
                   {item.label}
                 </span>
               </button>
@@ -233,84 +289,81 @@ export function GalleryInteractiveView({ items }: GalleryInteractiveViewProps) {
         })}
       </div>
 
-      {/* Native <dialog> Lightbox */}
+      {/* Native <dialog> Lightbox with focus trap */}
       <dialog
         ref={dialogRef}
         onCancel={(e) => {
           e.preventDefault();
           closeLightbox();
         }}
-        className="fixed inset-0 z-50 m-auto hidden open:flex h-full w-full max-h-screen max-w-screen items-center justify-center bg-transparent p-4 backdrop:bg-cafe-espresso/80"
+        onClick={(e) => {
+          if (e.target === dialogRef.current) closeLightbox();
+        }}
+        className="fixed inset-0 z-50 m-0 h-screen w-screen max-h-none max-w-none bg-cafe-espresso/95 p-0 open:flex open:flex-col open:items-center open:justify-center border-none"
       >
         {activePhoto && (
-          <div
-            role="document"
-            aria-label="Image view modal"
-            className="relative flex max-h-[92vh] w-full max-w-4xl flex-col items-center justify-center rounded border border-cafe-border bg-cafe-cream p-4 sm:p-6 shadow-xl animate-view-fade"
-          >
-            {/* Top bar with counter and close button */}
-            <div className="flex w-full items-center justify-between border-b border-cafe-border pb-3 mb-4">
-              <span className="text-xs font-semibold uppercase tracking-wider text-cafe-olive">
-                Photo {activePhotoIndex! + 1} of {visibleItems.length}
-              </span>
+          <div className="relative flex flex-col items-center justify-center p-4 max-w-4xl max-h-[90vh]">
+            {/* Top Close Button */}
+            <button
+              ref={closeButtonRef}
+              type="button"
+              onClick={closeLightbox}
+              aria-label="Close photo view"
+              className="absolute top-2 right-2 z-10 flex h-10 w-10 items-center justify-center rounded-[2px] border border-cafe-cream/20 bg-cafe-espresso text-cafe-cream hover:bg-cafe-terracotta transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cafe-terracotta"
+            >
+              <X className="h-5 w-5" />
+            </button>
 
-              <button
-                ref={closeButtonRef}
-                type="button"
-                onClick={closeLightbox}
-                aria-label="Close image view"
-                className="inline-flex items-center justify-center rounded border border-cafe-border bg-cafe-cream-deep p-1.5 text-cafe-espresso transition-colors duration-short hover:text-cafe-terracotta focus-visible:outline-2 focus-visible:outline-cafe-espresso"
-              >
-                <X className="h-5 w-5" aria-hidden="true" />
-              </button>
-            </div>
-
-            {/* Image container */}
-            <div className="relative flex w-full max-h-[70vh] items-center justify-center overflow-hidden rounded bg-cafe-cream-deep/60">
+            {/* Main Lightbox View */}
+            <div className="relative w-full max-h-[70vh] flex items-center justify-center overflow-hidden rounded-[2px] border border-cafe-cream/10 bg-cafe-espresso">
               {activePhoto.src ? (
                 <Image
                   src={activePhoto.src}
                   alt={activePhoto.alt}
                   width={activePhoto.width}
                   height={activePhoto.height}
-                  className="max-h-[65vh] w-auto max-w-full object-contain"
+                  priority
+                  className="max-h-[70vh] w-auto object-contain"
                 />
               ) : (
-                <div className="p-8 w-full">
+                <div className="p-8">
                   <Photo
+                    src={activePhoto.src}
                     alt={activePhoto.alt}
-                    aspectRatio={activePhoto.aspectRatio}
+                    aspectRatio="4/3"
                     label={activePhoto.label}
-                    className="w-full max-h-[50vh]"
+                    className="w-[500px]"
                   />
                 </div>
               )}
             </div>
 
-            {/* Bottom Caption and Prev/Next buttons */}
-            <div className="mt-4 flex w-full flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-              <p className="text-xs text-cafe-espresso/85 sm:text-sm">
-                {activePhoto.alt}
-              </p>
+            {/* Bottom Caption & Navigation */}
+            <div className="mt-4 flex w-full items-center justify-between text-cafe-cream text-xs">
+              <div>
+                <span className="font-heading font-semibold text-sm">{activePhoto.label}</span>
+                <span className="block text-cafe-cream/60">{activePhoto.alt}</span>
+              </div>
 
-              <div className="flex items-center gap-2 shrink-0 self-end sm:self-center">
+              <div className="flex items-center gap-2">
                 <button
                   type="button"
                   onClick={showPrevious}
-                  aria-label="Previous photograph"
-                  className="inline-flex items-center justify-center rounded border border-cafe-border bg-cafe-cream px-3 py-1.5 text-xs text-cafe-espresso transition-colors duration-short hover:bg-cafe-cream-deep focus-visible:outline-2 focus-visible:outline-cafe-espresso"
+                  aria-label="Previous photo"
+                  className="flex h-9 w-9 items-center justify-center rounded-[2px] border border-cafe-cream/20 text-cafe-cream hover:bg-cafe-cream/10"
                 >
-                  <ChevronLeft className="h-4 w-4 mr-1" aria-hidden="true" />
-                  <span>Prev</span>
+                  <ChevronLeft className="h-4 w-4" />
                 </button>
+                <span className="text-xs tabular-nums text-cafe-cream/70">
+                  {(activePhotoIndex ?? 0) + 1} / {visibleItems.length}
+                </span>
                 <button
                   type="button"
                   onClick={showNext}
-                  aria-label="Next photograph"
-                  className="inline-flex items-center justify-center rounded border border-cafe-border bg-cafe-cream px-3 py-1.5 text-xs text-cafe-espresso transition-colors duration-short hover:bg-cafe-cream-deep focus-visible:outline-2 focus-visible:outline-cafe-espresso"
+                  aria-label="Next photo"
+                  className="flex h-9 w-9 items-center justify-center rounded-[2px] border border-cafe-cream/20 text-cafe-cream hover:bg-cafe-cream/10"
                 >
-                  <span>Next</span>
-                  <ChevronRight className="h-4 w-4 ml-1" aria-hidden="true" />
+                  <ChevronRight className="h-4 w-4" />
                 </button>
               </div>
             </div>

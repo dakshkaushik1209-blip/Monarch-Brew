@@ -1,6 +1,8 @@
 import { ImageResponse } from "next/og";
 import { THEME_COLORS } from "@/config/theme";
 
+export const dynamic = "force-static";
+
 export const size = {
   width: 32,
   height: 32,
@@ -25,7 +27,7 @@ export default function Icon() {
           borderRadius: 4,
         }}
       >
-        C
+        M
       </div>
     ),
     {

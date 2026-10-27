@@ -9,5 +9,21 @@ export interface CafeEvent {
   photo?: string;
 }
 
-// Left empty by default so no fake events or dates are rendered
-export const cafeEvents: CafeEvent[] = [];
+export const cafeEvents: CafeEvent[] = [
+  {
+    id: "cupping-workshop",
+    title: "Community Coffee Cupping & Roast Tasting",
+    date: "2026-11-07",
+    time: "11:00 AM",
+    description: "Explore aroma profiles, sweetness, and acidity across three single-origin estate beans with our roaster.",
+    photo: "/images/events/cupping-workshop.jpg",
+  },
+  {
+    id: "acoustic-courtyard",
+    title: "Acoustic Courtyard Music Session",
+    date: "2026-11-14",
+    time: "6:30 PM",
+    description: "An evening of gentle acoustic sets and conversation under courtyard festoon lights.",
+    photo: "/images/events/acoustic-evening.jpg",
+  },
+];

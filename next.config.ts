@@ -1,50 +1,34 @@
 import type { NextConfig } from "next";
 
-const cspHeader = `
-  default-src 'self';
-  script-src 'self' 'unsafe-eval' 'unsafe-inline';
-  style-src 'self' 'unsafe-inline';
-  img-src 'self' data: blob:;
-  font-src 'self' data:;
-  frame-src 'self' https://www.google.com https://maps.google.com;
-  connect-src 'self' https://wa.me;
-  object-src 'none';
-  base-uri 'self';
-  form-action 'self';
-  frame-ancestors 'self';
-`.replace(/\s{2,}/g, " ").trim();
+// Validate environment variables during production builds
+const isProd = process.env.NODE_ENV === "production";
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
+
+if (isProd) {
+  if (!siteUrl || !siteUrl.trim()) {
+    throw new Error(
+      "BUILD ERROR: NEXT_PUBLIC_SITE_URL environment variable is required for production builds. Please set NEXT_PUBLIC_SITE_URL to a valid HTTPS URL (e.g., https://monarchbrew.in) in your environment variables."
+    );
+  }
+  if (!siteUrl.startsWith("https://")) {
+    throw new Error(
+      `BUILD ERROR: NEXT_PUBLIC_SITE_URL must start with 'https://' (received: '${siteUrl}'). Secure HTTPS is required for production deployment.`
+    );
+  }
+  if (siteUrl.endsWith("/")) {
+    throw new Error(
+      `BUILD ERROR: NEXT_PUBLIC_SITE_URL must not contain a trailing slash (received: '${siteUrl}').`
+    );
+  }
+}
 
 const nextConfig: NextConfig = {
+  output: "export",
+  trailingSlash: true,
   reactStrictMode: true,
   poweredByHeader: false,
-  async headers() {
-    return [
-      {
-        source: "/(.*)",
-        headers: [
-          {
-            key: "X-Content-Type-Options",
-            value: "nosniff",
-          },
-          {
-            key: "Referrer-Policy",
-            value: "strict-origin-when-cross-origin",
-          },
-          {
-            key: "Permissions-Policy",
-            value: "camera=(), microphone=(), geolocation=()",
-          },
-          {
-            key: "X-Frame-Options",
-            value: "SAMEORIGIN",
-          },
-          {
-            key: "Content-Security-Policy",
-            value: cspHeader,
-          },
-        ],
-      },
-    ];
+  images: {
+    unoptimized: true,
   },
 };
 

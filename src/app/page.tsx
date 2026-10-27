@@ -1,23 +1,24 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import { MapPin, Clock, Phone, ArrowUpRight, ArrowRight } from "lucide-react";
 import { cafeConfig } from "@/config/cafe";
 import { popularItems, formatPrice } from "@/data/menu";
 import { Photo } from "@/components/Photo";
 import { AnimatedButton, AnimatedLink } from "@/components/AnimatedButton";
-import { CoffeeCupWithSteam, CoffeeBeans, BotanicalSprig } from "@/components/LineIllustrations";
+import { CoffeeBeans } from "@/components/LineIllustrations";
 import { BarLiveRhythm } from "@/components/BarLiveRhythm";
 import { CoffeeMatchmaker } from "@/components/CoffeeMatchmaker";
-import { HeroVisual } from "@/components/HeroVisual";
-import { Reveal, ImageReveal, TextReveal } from "@/components/Reveal";
-import { StaggerContainer, StaggerItem } from "@/components/TextReveal";
+import { StoryPinnedSection } from "@/components/StoryPinnedSection";
+import { WordScrollHighlight } from "@/components/WordScrollHighlight";
+import { SectionDivider } from "@/components/SectionDivider";
+import { Reveal } from "@/components/Reveal";
+import { HeroSticker } from "@/components/HeroSticker";
 
 export const metadata: Metadata = {
   title: `${cafeConfig.name} | ${cafeConfig.tagline}`,
-  description: `${cafeConfig.name} on ${cafeConfig.address.street}. ${cafeConfig.description}`,
+  description: `Slow roasts and fresh bakes at ${cafeConfig.name}. Specialty filter coffees, artisanal vegetarian bakes, and cold brews at ${cafeConfig.address.display}.`,
   openGraph: {
     title: `${cafeConfig.name} | ${cafeConfig.tagline}`,
-    description: `${cafeConfig.name} on ${cafeConfig.address.street}. ${cafeConfig.description}`,
+    description: `Slow roasts and fresh bakes at ${cafeConfig.name}. Specialty filter coffees, artisanal vegetarian bakes, and cold brews at ${cafeConfig.address.display}.`,
     url: cafeConfig.siteUrl,
     siteName: cafeConfig.name,
     locale: "en_US",
@@ -26,82 +27,16 @@ export const metadata: Metadata = {
 };
 
 export default function HomePage() {
-  const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-    `${cafeConfig.address.street}, ${cafeConfig.address.city} ${cafeConfig.address.postcode}`
-  )}`;
+  const googleMapsUrl = cafeConfig.address.mapsUrl;
 
   return (
     <div className="flex flex-col">
-      {/* 1. Hero Section: High-energy Coffeelo-inspired hero */}
-      <section
-        aria-labelledby="hero-heading"
-        className="w-full bg-cafe-cream py-12 sm:py-20 lg:py-24"
-      >
-        <div className="mx-auto max-w-site px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-12 lg:gap-12">
-            {/* Left Column: Heading, hours, buttons */}
-            <div className="flex flex-col items-start gap-6 lg:col-span-7">
-              {/* Steaming cup line illustration & badge */}
-              <div className="flex items-center gap-3">
-                <CoffeeCupWithSteam className="h-10 w-10 text-cafe-terracotta" />
-                <span className="inline-block rounded-[2px] border border-cafe-border bg-cafe-cream-deep/80 px-3 py-1 text-[11px] font-semibold uppercase tracking-widest text-cafe-olive">
-                  {cafeConfig.address.neighborhood}
-                </span>
-              </div>
-
-              {/* Chunky playful headline with angled kicker */}
-              <div className="flex flex-col items-start gap-2">
-                <span className="inline-block -rotate-2 font-heading text-lg font-bold italic tracking-wide text-cafe-terracotta sm:text-2xl">
-                  An Elevated Brew Routine
-                </span>
-                <TextReveal as="h1" className="w-full" isHero={true}>
-                  <span
-                    id="hero-heading"
-                    className="block font-heading text-5xl font-black tracking-tight text-cafe-espresso sm:text-6xl lg:text-7xl lg:leading-[1.08]"
-                  >
-                    Coffee <span className="text-cafe-terracotta">Experience</span>
-                  </span>
-                </TextReveal>
-              </div>
-
-              <StaggerContainer className="flex flex-col gap-6" delayChildren={0.2}>
-                <StaggerItem>
-                  <div className="flex flex-col gap-1 border-l-2 border-cafe-terracotta/70 pl-4 py-0.5">
-                    <span className="text-xs font-bold uppercase tracking-wider text-cafe-espresso">
-                      Single-Origin Specialty
-                    </span>
-                    <p className="max-w-xl text-sm leading-relaxed text-cafe-espresso/85 sm:text-base">
-                      Ethical Karnataka estate beans slow roasted in small batches. Sourdough bakes sliced warm from 7:30 AM on {cafeConfig.address.street}.
-                    </p>
-                  </div>
-                </StaggerItem>
-
-                <StaggerItem>
-                  <div className="flex flex-wrap items-center gap-4 pt-2">
-                    <AnimatedButton href="/menu" variant="primary">
-                      Explore the menu
-                    </AnimatedButton>
-
-                    <AnimatedButton href="/visit" variant="secondary">
-                      Visit the bar
-                    </AnimatedButton>
-                  </div>
-                </StaggerItem>
-              </StaggerContainer>
-            </div>
-
-            {/* Right Column: Hero Iced Coffee Splash Visual with magnetic hover & interactive badge */}
-            <div className="relative mx-auto flex w-full max-w-md items-center justify-center lg:col-span-5 lg:max-w-none">
-              <ImageReveal delay={0.2} isHero={true}>
-                <HeroVisual />
-              </ImageReveal>
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* 1. Hero Section: Compact Two-Column Hero (Heading left, Coffee cup & stickers right) */}
+      <HeroSticker />
 
       {/* 1.5 Bar Live Rhythm & Daily Brewing Status */}
       <section
+        id="live-rhythm-section"
         aria-labelledby="live-rhythm-heading"
         className="w-full border-y border-cafe-border bg-cafe-cream-deep/40 py-6 sm:py-8"
       >
@@ -137,7 +72,7 @@ export default function HomePage() {
                 <CoffeeBeans className="mt-1 h-7 w-7 shrink-0 text-cafe-terracotta" />
                 <div className="flex flex-col gap-1">
                   <div className="flex items-center gap-3">
-                    <span className="inline-block rounded-[2px] border border-cafe-border bg-cafe-cream-deep px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-widest text-cafe-terracotta">
+                    <span className="text-xs font-medium text-cafe-terracotta">
                       Today at the counter
                     </span>
                     <span className="text-xs text-cafe-olive">Limited morning batch</span>
@@ -179,14 +114,14 @@ export default function HomePage() {
             {/* Left Column: Heading and editorial item list */}
             <div className="flex flex-col gap-8 lg:col-span-7">
               <Reveal>
-                <span className="text-xs font-semibold uppercase tracking-widest text-cafe-olive">
-                  Daily Staples
+                <span className="text-xs font-medium text-cafe-olive">
+                  Daily staples
                 </span>
                 <h2
                   id="popular-items-heading"
-                  className="mt-2 font-heading text-3xl font-semibold tracking-tight text-cafe-espresso sm:text-4xl"
+                  className="mt-1 font-heading text-3xl font-semibold tracking-tight text-cafe-espresso text-balance sm:text-4xl"
                 >
-                  What people <em className="font-normal italic text-cafe-terracotta">order</em> here
+                  What people order here
                 </h2>
                 <p className="mt-2 text-sm text-cafe-espresso/80">
                   Prepared with ethical estate beans, regional whole milk, and stone ground flours.
@@ -238,6 +173,7 @@ export default function HomePage() {
             <div className="flex flex-col gap-4 lg:col-span-5">
               <Reveal delay={0.2} reverseDelay={0.1}>
                 <Photo
+                  src="/images/home/drip-brew-service.png"
                   alt="Traditional drip coffee brewing and service"
                   aspectRatio="4/5"
                   label="Drip brew service"
@@ -253,70 +189,18 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 3.5 Interactive Taste Matchmaker */}
-      <section
-        aria-labelledby="matchmaker-heading"
-        className="w-full bg-cafe-cream pb-16 sm:pb-24"
-      >
-        <div className="mx-auto max-w-site px-4 sm:px-6 lg:px-8">
-          <Reveal>
-            <CoffeeMatchmaker />
-          </Reveal>
-        </div>
-      </section>
 
-      {/* 4. About summary: Deeper cream full-width band */}
-      <section
-        aria-labelledby="about-summary-heading"
-        className="w-full border-y border-cafe-border bg-cafe-cream-deep py-16 sm:py-24"
-      >
-        <div className="mx-auto max-w-site px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-12 lg:gap-14">
-            {/* Left Photo slot */}
-            <div className="lg:col-span-5">
-              <Reveal>
-                <Photo
-                  alt="Bakery flour prep and sourdough kneading table"
-                  aspectRatio="4/3"
-                  label="Baking table and stone mill"
-                  illustration="sprig"
-                  className="w-full"
-                />
-              </Reveal>
-            </div>
+      {/* Section Divider: Scallop into Statement */}
+      <SectionDivider variant="scallop" fillColor="text-cafe-cream-deep/30" />
 
-            {/* Right Plain text */}
-            <div className="flex flex-col items-start gap-5 lg:col-span-7">
-              <Reveal delay={0.15} reverseDelay={0.08}>
-                <div className="flex items-center gap-2">
-                  <BotanicalSprig className="h-6 w-6 text-cafe-olive" />
-                  <span className="text-xs font-semibold uppercase tracking-widest text-cafe-olive">
-                    Our Philosophy
-                  </span>
-                </div>
+      {/* 4. Word-by-word scroll-linked highlight statement */}
+      <WordScrollHighlight />
 
-                <h2
-                  id="about-summary-heading"
-                  className="mt-2 font-heading text-3xl font-semibold tracking-tight text-cafe-espresso sm:text-4xl"
-                >
-                  A small, independent neighborhood <em className="font-normal italic text-cafe-terracotta">workshop</em>
-                </h2>
+      {/* Section Divider: Hand-cut back into cream */}
+      <SectionDivider variant="handcut" fillColor="text-cafe-cream" flip={true} />
 
-                <p className="mt-4 text-sm leading-relaxed text-cafe-espresso/85 sm:text-base">
-                  {cafeConfig.aboutIntro}
-                </p>
-
-                <div className="pt-4">
-                  <AnimatedLink href="/about" className="gap-2 font-semibold uppercase tracking-wider text-xs">
-                    <span>Read our story</span>
-                    <ArrowRight className="h-4 w-4" aria-hidden="true" />
-                  </AnimatedLink>
-                </div>
-              </Reveal>
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* 4.5 Story Section: Pinned Sticky photo with scrolling narrative steps */}
+      <StoryPinnedSection />
 
       {/* 5. Gallery teaser: Cream band with tactile uneven grid */}
       <section
@@ -327,18 +211,18 @@ export default function HomePage() {
           <Reveal>
             <div className="flex flex-col items-start justify-between gap-4 border-b border-cafe-border pb-6 sm:flex-row sm:items-end">
               <div>
-                <span className="text-xs font-semibold uppercase tracking-widest text-cafe-olive">
-                  Our Space
+                <span className="text-xs font-medium text-cafe-olive">
+                  Our space
                 </span>
                 <h2
                   id="gallery-teaser-heading"
-                  className="mt-2 font-heading text-3xl font-semibold tracking-tight text-cafe-espresso sm:text-4xl"
+                  className="mt-1 font-heading text-3xl font-semibold tracking-tight text-cafe-espresso text-balance sm:text-4xl"
                 >
-                  Moments around the <em className="font-normal italic text-cafe-terracotta">room</em>
+                  Moments around the room
                 </h2>
               </div>
 
-              <AnimatedLink href="/gallery" className="gap-2 font-semibold uppercase tracking-wider text-xs">
+              <AnimatedLink href="/gallery" className="gap-2 text-xs font-semibold uppercase tracking-wider">
                 <span>See all photos</span>
                 <ArrowRight className="h-4 w-4" aria-hidden="true" />
               </AnimatedLink>
@@ -349,6 +233,7 @@ export default function HomePage() {
           <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-12">
             <Reveal className="sm:col-span-7" delay={0.05} reverseDelay={0.15}>
               <Photo
+                src="/images/gallery/window-table.png"
                 alt="Sunlit indoor wood tables and reading bench"
                 aspectRatio="16/9"
                 label="Indoor reading bench"
@@ -359,6 +244,7 @@ export default function HomePage() {
 
             <Reveal className="sm:col-span-5" delay={0.1} reverseDelay={0.1}>
               <Photo
+                src="/images/gallery/croissants-rack.png"
                 alt="Fresh morning pastries on wooden cooling rack"
                 aspectRatio="1/1"
                 label="Morning pastry rack"
@@ -370,6 +256,7 @@ export default function HomePage() {
 
             <Reveal className="sm:col-span-5" delay={0.15} reverseDelay={0.05}>
               <Photo
+                src="/images/gallery/espresso-bar.png"
                 alt="Espresso machine portafilter extraction"
                 aspectRatio="4/3"
                 label="Espresso extraction"
@@ -381,6 +268,7 @@ export default function HomePage() {
 
             <Reveal className="sm:col-span-7" delay={0.2} reverseDelay={0}>
               <Photo
+                src="/images/gallery/courtyard.png"
                 alt="Quiet rear courtyard with green potted plants"
                 aspectRatio="16/9"
                 label="Rear garden tables"
@@ -403,36 +291,34 @@ export default function HomePage() {
             <div className="grid grid-cols-1 gap-12 lg:grid-cols-12 lg:gap-14">
               {/* Col 1: Address and directions */}
               <div className="flex flex-col gap-4 lg:col-span-5">
-                <span className="text-xs font-semibold uppercase tracking-widest text-cafe-terracotta">
+                <span className="text-xs font-medium text-cafe-terracotta">
                   Location
                 </span>
                 <h2
                   id="visit-strip-heading"
-                  className="font-heading text-3xl font-semibold tracking-tight text-cafe-cream sm:text-4xl"
+                  className="font-heading text-3xl font-semibold tracking-tight text-cafe-cream text-balance sm:text-4xl"
                 >
-                  Visit us on <em className="font-normal italic text-cafe-terracotta">{cafeConfig.address.street}</em>
+                  Visit {cafeConfig.name}
                 </h2>
 
                 <div className="flex items-start gap-3 text-sm text-cafe-cream/85">
                   <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-cafe-terracotta" aria-hidden="true" />
                   <div>
-                    <p className="font-semibold text-cafe-cream">{cafeConfig.address.street}</p>
-                    <p>
-                      {cafeConfig.address.city}, {cafeConfig.address.postcode}
-                    </p>
-                    <p className="mt-1 text-xs text-cafe-cream/60">{cafeConfig.address.directions}</p>
+                    <p className="font-semibold text-cafe-cream">{cafeConfig.address.display}</p>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-3 text-sm text-cafe-cream/85">
-                  <Phone className="h-4 w-4 shrink-0 text-cafe-terracotta" aria-hidden="true" />
-                  <a
-                    href={`tel:${cafeConfig.contact.phone}`}
-                    className="font-medium text-cafe-cream hover:text-cafe-terracotta hover:underline"
-                  >
-                    {cafeConfig.contact.phone}
-                  </a>
-                </div>
+                {cafeConfig.contact.phone && (
+                  <div className="flex items-center gap-3 text-sm text-cafe-cream/85">
+                    <Phone className="h-4 w-4 shrink-0 text-cafe-terracotta" aria-hidden="true" />
+                    <a
+                      href={`tel:${cafeConfig.contact.phone}`}
+                      className="font-medium text-cafe-cream hover:text-cafe-terracotta hover:underline"
+                    >
+                      {cafeConfig.contact.phone}
+                    </a>
+                  </div>
+                )}
 
                 <div className="pt-2">
                   <a
@@ -449,8 +335,8 @@ export default function HomePage() {
 
               {/* Col 2: Opening hours table */}
               <div className="flex flex-col gap-4 lg:col-span-4">
-                <span className="text-xs font-semibold uppercase tracking-widest text-cafe-terracotta">
-                  Service Hours
+                <span className="text-xs font-medium text-cafe-terracotta">
+                  Service hours
                 </span>
                 <div className="flex items-start gap-2 text-sm font-semibold text-cafe-cream">
                   <Clock className="mt-0.5 h-4 w-4 shrink-0 text-cafe-terracotta" aria-hidden="true" />

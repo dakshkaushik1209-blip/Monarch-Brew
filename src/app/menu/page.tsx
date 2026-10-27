@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { cafeConfig } from "@/config/cafe";
-import { getSiteUrl } from "@/config/site";
+import { getSiteUrl, isDemoMode } from "@/config/site";
 import { menuCategories } from "@/data/menu";
 import { MenuInteractiveView } from "@/components/MenuInteractiveView";
 import { BrewCalculator } from "@/components/BrewCalculator";
@@ -51,38 +51,41 @@ export default function MenuPage() {
     })),
   };
 
+  const showJsonLd = !isDemoMode();
+
   return (
     <div className="py-8 sm:py-16">
-      {/* Schema.org Structured Data */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
+      {/* Schema.org Structured Data (Omitted in demo mode) */}
+      {showJsonLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      )}
 
       {/* Print-only header */}
       <div className="mx-auto hidden max-w-site px-4 print:block mb-8 border-b border-black pb-4 text-black">
         <p className="font-heading text-3xl font-bold">{cafeConfig.name}</p>
         <p className="text-xs">
-          {cafeConfig.address.street}, {cafeConfig.address.city} | {cafeConfig.contact.phone}
+          {cafeConfig.address.display}
+          {cafeConfig.contact.phone ? ` | ${cafeConfig.contact.phone}` : ""}
         </p>
         <p className="mt-1 text-xs font-semibold">
-          Menu: All prices in Indian Rupees (INR). Kitchen closes at 3:00 PM.
+          Menu: All prices in Indian Rupees (INR).
         </p>
       </div>
 
       {/* 1. Page Header (Screen) */}
       <header className="mx-auto max-w-site px-4 sm:px-6 lg:px-8 print-hidden print:hidden mb-12">
         <Reveal className="flex flex-col items-start gap-4" isHero={true}>
-          <div className="flex items-center gap-3">
-            <CoffeeBeans className="h-5 w-5 text-cafe-terracotta" />
-            <span className="inline-block rounded-[2px] border border-cafe-border bg-cafe-cream-deep/80 px-3 py-1 text-[11px] font-semibold uppercase tracking-widest text-cafe-olive">
-              Daily Offerings
-            </span>
-            <Croissant className="h-5 w-5 text-cafe-olive/80" />
+          <div className="flex items-center gap-2.5 text-xs font-medium text-cafe-olive">
+            <CoffeeBeans className="h-4 w-4 text-cafe-terracotta" />
+            <span>Daily offerings & seasonal bakes</span>
+            <Croissant className="h-4 w-4 text-cafe-olive/80" />
           </div>
 
-          <h1 className="font-heading text-4xl font-semibold tracking-tight text-cafe-espresso sm:text-6xl">
-            Seasonal <em className="font-normal italic text-cafe-terracotta">menu</em> and fresh bakes
+          <h1 className="font-heading text-4xl font-semibold tracking-tight text-cafe-espresso text-balance sm:text-6xl">
+            Seasonal menu and fresh bakes
           </h1>
 
           <p className="max-w-2xl text-sm leading-relaxed text-cafe-espresso/85 sm:text-base">
@@ -118,9 +121,9 @@ export default function MenuPage() {
             <div className="max-w-xl flex flex-col gap-2">
               <h2
                 id="allergen-note-heading"
-                className="font-heading text-xl font-semibold text-cafe-espresso sm:text-2xl"
+                className="font-heading text-xl font-semibold text-cafe-espresso text-balance sm:text-2xl"
               >
-                Allergen and Preparation <em className="font-normal italic text-cafe-terracotta">Notice</em>
+                Allergen and preparation notice
               </h2>
               <p className="text-xs leading-relaxed text-cafe-espresso/80 sm:text-sm">
                 Please tell us about any allergy before you order. Our kitchen handles tree nuts, dairy, wheat, sesame, and eggs. We do our best to avoid cross-contamination, but cannot guarantee a completely allergen-free environment.

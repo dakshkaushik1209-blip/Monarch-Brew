@@ -19,6 +19,28 @@ html {
   overflow-x: clip;
 }
 
+/* Lenis smooth scrolling integration */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: clip;
+}
+
+.lenis.lenis-smooth iframe {
+  pointer-events: none;
+}
+
 body {
   min-height: 100vh;
   background-color: #F4EADB;
@@ -61,6 +83,91 @@ h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-fraunces), Georgia, serif;
 }
 
+/* Smooth page change entry animation (composite-only transform and opacity) */
+@keyframes pageFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-page-enter {
+  animation: pageFadeIn 280ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  will-change: transform, opacity;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-page-enter {
+    animation: none !important;
+  }
+}
+
+/* Looping slow steam animation (composite-only transform & opacity) */
+@keyframes steamWaft {
+  0% {
+    opacity: 0;
+    transform: translateY(2px) scaleX(0.9);
+  }
+  40% {
+    opacity: 0.75;
+    transform: translateY(-4px) scaleX(1.05);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-10px) scaleX(1.15);
+  }
+}
+
+.animate-steam-1 {
+  animation: steamWaft 3.2s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+}
+
+.animate-steam-2 {
+  animation: steamWaft 3.6s cubic-bezier(0.65, 0, 0.35, 1) infinite 0.9s;
+}
+
+.animate-steam-3 {
+  animation: steamWaft 4s cubic-bezier(0.65, 0, 0.35, 1) infinite 1.8s;
+}
+
+/* Subtle opacity-only pulsing status dot */
+@keyframes pulseDot {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.3;
+  }
+}
+
+.animate-pulse-dot {
+  animation: pulseDot 2.2s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+}
+
+/* Hand-drawn SVG underline draw */
+.hero-underline-path {
+  stroke-dasharray: 140;
+  stroke-dashoffset: 140;
+  animation: drawUnderline 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.6s forwards;
+}
+
+@keyframes drawUnderline {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-underline-path {
+    stroke-dashoffset: 0 !important;
+    animation: none !important;
+  }
+}
+
 /* Motion restraint: modest fade and 8px translate */
 @keyframes viewFadeIn {
   from {
@@ -91,7 +198,11 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .animate-float-slow {
+  .animate-float-slow,
+  .animate-steam-1,
+  .animate-steam-2,
+  .animate-steam-3,
+  .animate-pulse-dot {
     animation: none !important;
   }
 }
@@ -125,5 +236,67 @@ h1, h2, h3, h4, h5, h6 {
   .print-break-inside-avoid {
     break-inside: avoid;
     page-break-inside: avoid;
+  }
+}
+
+/* ==============================================================================
+   Sticky Frosted Glass Navbar Styles & Fallbacks
+   ============================================================================== */
+
+.navbar-transition {
+  transition: background-color 200ms ease-out,
+              border-color 200ms ease-out,
+              box-shadow 200ms ease-out,
+              backdrop-filter 200ms ease-out,
+              -webkit-backdrop-filter 200ms ease-out;
+}
+
+/* Flat state: at the top of the page (scrollY under ~24px) */
+.navbar-flat {
+  background-color: var(--color-cream);
+  border-bottom: 1px solid transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+/* Glass state: scrolled past ~24px */
+.navbar-glass {
+  background-color: color-mix(in srgb, var(--color-cream) 80%, transparent);
+  backdrop-filter: blur(12px) saturate(1.2);
+  -webkit-backdrop-filter: blur(12px) saturate(1.2);
+  border-bottom: 1px solid color-mix(in srgb, var(--color-border) 60%, transparent);
+  box-shadow: 0 2px 8px -2px rgba(59, 42, 32, 0.05);
+}
+
+/* Solid state when fullscreen mobile menu is open */
+.navbar-solid {
+  background-color: var(--color-cream);
+  border-bottom: 1px solid var(--color-border);
+  box-shadow: 0 2px 8px -2px rgba(59, 42, 32, 0.05);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+/* Fallback for browsers that do not support backdrop-filter */
+@supports not ((backdrop-filter: blur(12px)) or (-webkit-backdrop-filter: blur(12px))) {
+  .navbar-glass {
+    background-color: color-mix(in srgb, var(--color-cream) 95%, transparent);
+  }
+}
+
+/* Respect user's preference for reduced transparency */
+@media (prefers-reduced-transparency: reduce) {
+  .navbar-glass {
+    background-color: var(--color-cream) !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+}
+
+/* Respect user's preference for reduced motion: instant state change */
+@media (prefers-reduced-motion: reduce) {
+  .navbar-transition {
+    transition: none !important;
   }
 }

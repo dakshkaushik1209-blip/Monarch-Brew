@@ -1,6 +1,6 @@
-# Independent Cafe Website
+# Monarch Brew - Cafe Website
 
-A handcrafted, high-performance website built for an independent specialty coffee shop and seasonal bakery. Built with Next.js 15 (App Router), TypeScript, and Tailwind CSS.
+A handcrafted, high-performance website built for Monarch Brew, an independent specialty coffee shop and seasonal bakery at RDC, Raj Nagar, Ghaziabad. Built with Next.js 15 (App Router), TypeScript, and Tailwind CSS.
 
 ## Design Philosophy
 
@@ -11,13 +11,13 @@ A handcrafted, high-performance website built for an independent specialty coffe
 
 ## Features
 
-- **Home (`/`):** Asymmetric hero with current operating hours, counter specials strip, curated signature orders, gallery preview, and direct map link.
-- **Menu (`/menu`):** Typed catalog across 6 categories with dietary filters (All, Veg only) using Indian BIS standard square-and-dot indicators, print stylesheet, and Schema.org Menu JSON-LD.
+- **Home (`/`):** Two-column hero with current operating hours, curated signature orders, gallery preview, and direct map link.
+- **Menu (`/menu`):** Typed catalog across 6 categories with vegetarian indicators, print stylesheet, and Schema.org Menu JSON-LD.
 - **About (`/about`):** Editorial background story, source ingredient standards, and optional team showcase.
 - **Gallery (`/gallery`):** Category filter tabs, responsive uneven grid, and accessible native HTML5 dialog lightbox with keyboard navigation.
 - **Visit (`/visit`):** Opening hours table with automatic local day highlight, contact details, click-to-load interactive map, and accessible reservation form.
 - **Legal (`/privacy`, `/terms`):** Plain-language policies reflecting the real, zero-tracking behavior of this site and India's DPDP Act 2023.
-- **Pre-Launch Guard:** Custom audit script to catch any bracketed placeholder text before production launch.
+- **Pre-Launch Guard:** Custom audit script to catch any bracketed placeholder text and validate live configuration before production launch.
 
 ## Getting Started
 
@@ -33,15 +33,19 @@ npm run dev
 
 Visit [http://localhost:3000](http://localhost:3000) to view the site.
 
-### Pre-Launch Placeholder Audit
+### Pre-Launch Placeholder & Site Mode Audit
 
-Before launching to your production domain, run the placeholder audit to verify that all bracketed items (e.g., `[Cafe name]`, `[City]`, `[Phone number]`) in `src/config/cafe.ts` have been replaced:
+This project supports two operating modes controlled via `NEXT_PUBLIC_SITE_MODE`:
+- `demo` (default): Blocks search engine indexing (`noindex, nofollow`, `robots.txt` disallows all), omits `sitemap.xml`, and omits schema.org JSON-LD so sample business data is never indexed.
+- `live`: Enables full indexing, sitemap generation, and JSON-LD structured data.
+
+Run the placeholder audit before going live:
 
 ```bash
 # Informational audit
 npm run check:placeholders
 
-# Strict CI/CD check (fails with exit code 1 if placeholders remain)
+# Strict audit (fails build if running in live mode with missing fields)
 npm run check:placeholders -- --strict
 ```
 

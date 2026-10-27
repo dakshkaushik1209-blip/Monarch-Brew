@@ -24,15 +24,26 @@ yarn-debug.log*
 yarn-error.log*
 
 # local env files
+.env
 .env*.local
+.env.production
+.env.development
 
-# vercel
+# ide & editor
+.vscode/
+.idea/
+
+# vercel & cloudflare
 .vercel
+.wrangler
 
 # typescript
 *.tsbuildinfo
 next-env.d.ts
 
-# temp playwright
+# temp playwright & audit artifacts
 .playwright-cli/
 .audit-screens*/
+scripts/*.png
+public/audit-critique/
+public/verify-screenshots/

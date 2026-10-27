@@ -1,9 +1,19 @@
 import type { MetadataRoute } from "next";
-import { getSiteUrl } from "@/config/site";
+import { getSiteUrl, isDemoMode } from "@/config/site";
+
+export const dynamic = "force-static";
 
 export default function robots(): MetadataRoute.Robots {
-  const siteUrl = getSiteUrl();
+  if (isDemoMode()) {
+    return {
+      rules: {
+        userAgent: "*",
+        disallow: "/",
+      },
+    };
+  }
 
+  const siteUrl = getSiteUrl();
   return {
     rules: {
       userAgent: "*",

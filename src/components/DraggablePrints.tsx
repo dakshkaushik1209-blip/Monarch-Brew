@@ -104,7 +104,7 @@ export function DraggableCardContainer({
 
         {/* Table instruction note */}
         <div className="pointer-events-none absolute bottom-3 left-4 z-10 hidden sm:block">
-          <p className="text-[11px] font-medium uppercase tracking-widest text-cafe-espresso/60">
+          <p className="text-xs font-medium text-cafe-espresso/60">
             Click or drag prints to move around the table
           </p>
         </div>
@@ -264,14 +264,16 @@ export function DraggablePrints({ items }: DraggablePrintsProps) {
     setAnnouncement("Table layout reset. All prints returned to initial positions.");
   };
 
-  // Fixed spread coordinates for up to 6 prints
+  // Fixed spread coordinates for up to 8 prints
   const desktopLayouts = [
-    { left: "6%", top: "12%" },
-    { left: "38%", top: "8%" },
-    { left: "68%", top: "16%" },
-    { left: "18%", top: "48%" },
-    { left: "52%", top: "46%" },
-    { left: "74%", top: "48%" },
+    { left: "4%", top: "8%" },
+    { left: "28%", top: "6%" },
+    { left: "54%", top: "10%" },
+    { left: "76%", top: "8%" },
+    { left: "10%", top: "50%" },
+    { left: "34%", top: "46%" },
+    { left: "58%", top: "52%" },
+    { left: "78%", top: "48%" },
   ];
 
   return (
@@ -289,7 +291,7 @@ export function DraggablePrints({ items }: DraggablePrintsProps) {
         onReset={handleReset}
         isReducedMotion={isReducedMotion}
       >
-        {prints.slice(0, 6).map((item, index) => {
+        {prints.slice(0, 8).map((item, index) => {
           const layout = desktopLayouts[index % desktopLayouts.length];
 
           return (

@@ -19,8 +19,8 @@ export default function TermsPage() {
     <div className="mx-auto max-w-site px-4 py-12 sm:px-6 sm:py-20 lg:px-8">
       {/* Header */}
       <div className="max-w-2xl border-b border-cafe-border/60 pb-8">
-        <span className="text-xs font-medium uppercase tracking-widest text-cafe-olive">
-          Legal and Terms
+        <span className="text-xs font-medium text-cafe-olive">
+          Legal and terms
         </span>
         <h1 className="mt-3 font-heading text-3xl font-semibold tracking-tight text-cafe-espresso sm:text-4xl">
           Terms and Conditions
@@ -138,17 +138,24 @@ export default function TermsPage() {
             <p>
               <strong className="text-cafe-espresso">Cafe:</strong> {cafeConfig.name}
             </p>
+            {cafeConfig.contact.email && (
+              <p>
+                <strong className="text-cafe-espresso">Email:</strong>{" "}
+                <a
+                  href={`mailto:${cafeConfig.contact.email}`}
+                  className="text-cafe-terracotta underline hover:text-cafe-espresso"
+                >
+                  {cafeConfig.contact.email}
+                </a>
+              </p>
+            )}
+            {cafeConfig.contact.phone && (
+              <p>
+                <strong className="text-cafe-espresso">Phone:</strong> {cafeConfig.contact.phone}
+              </p>
+            )}
             <p>
-              <strong className="text-cafe-espresso">Email:</strong>{" "}
-              <a
-                href={`mailto:${cafeConfig.contact.email}`}
-                className="text-cafe-terracotta underline hover:text-cafe-espresso"
-              >
-                {cafeConfig.contact.email}
-              </a>
-            </p>
-            <p>
-              <strong className="text-cafe-espresso">Phone:</strong> {cafeConfig.contact.phone}
+              <strong className="text-cafe-espresso">Address:</strong> {cafeConfig.address.display}
             </p>
           </div>
         </section>

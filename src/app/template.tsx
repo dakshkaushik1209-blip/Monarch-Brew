@@ -1,32 +1,15 @@
-"use client";
-
 import React from "react";
-import { motion, useReducedMotion } from "motion/react";
 
 /**
- * Route transition template: quick 200ms fade between page navigations.
- * Adheres strictly to emil-design-eng and animate rules.
- * Automatically falls back to instantaneous change when prefers-reduced-motion is requested.
+ * Route transition template: refined 280ms composite-only entry.
+ * Combines opacity with a subtle 8px upward settle to create an organic page arrival.
+ * Uses high-performance CSS animation to guarantee zero SSR blank-screen lock,
+ * zero layout thrashing, and native 60fps/120fps hardware acceleration.
  */
 export default function Template({ children }: { children: React.ReactNode }) {
-  const shouldReduceMotion = useReducedMotion();
-
-  if (shouldReduceMotion) {
-    return <>{children}</>;
-  }
-
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{
-        duration: 0.2,
-        ease: "easeOut",
-      }}
-      className="flex-1"
-    >
+    <div className="flex-1 flex flex-col animate-page-enter">
       {children}
-    </motion.div>
+    </div>
   );
 }

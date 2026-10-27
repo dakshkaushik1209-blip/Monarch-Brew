@@ -19,8 +19,8 @@ export default function PrivacyPage() {
     <div className="mx-auto max-w-site px-4 py-12 sm:px-6 sm:py-20 lg:px-8">
       {/* Header */}
       <div className="max-w-2xl border-b border-cafe-border/60 pb-8">
-        <span className="text-xs font-medium uppercase tracking-widest text-cafe-olive">
-          Legal and Privacy
+        <span className="text-xs font-medium text-cafe-olive">
+          Legal and privacy
         </span>
         <h1 className="mt-3 font-heading text-3xl font-semibold tracking-tight text-cafe-espresso sm:text-4xl">
           Privacy Policy
@@ -64,7 +64,7 @@ export default function PrivacyPage() {
               <strong className="font-medium text-cafe-espresso">Google Maps:</strong> An interactive map of our location is provided using Google Maps. To protect your privacy, this map is not loaded automatically when you view the page. It loads only when you explicitly click the &quot;Load interactive map&quot; button. Until that click occurs, zero requests are sent to Google and zero Google cookies are placed on your browser. Once clicked, Google connects directly and processes your IP address and connection details under Google&apos;s Privacy Policy.
             </li>
             <li>
-              <strong className="font-medium text-cafe-espresso">WhatsApp:</strong> Links for table reservations and inquiries direct you to WhatsApp (operated by Meta Platforms, Inc.). Any messaging conversation you initiate with us takes place on WhatsApp infrastructure and is governed by Meta&apos;s privacy policy.
+              <strong className="font-medium text-cafe-espresso">Social platforms and messaging:</strong> This site links out to Instagram, Facebook, and WhatsApp. We do not embed feeds, widgets, tracking pixels, scripts, or SDKs from any of these platforms on our web pages. Once you click an external link to visit our profile or message us, you leave this website, and each platform&apos;s own privacy policy applies to your interaction with their service.
             </li>
             <li>
               <strong className="font-medium text-cafe-espresso">Self-hosted typography:</strong> Fonts used on this website (Fraunces and DM Sans) are embedded in the site bundle and served directly from our own hosting domain. No live font requests are made to third-party font servers when you visit.
@@ -119,20 +119,24 @@ export default function PrivacyPage() {
             <p>
               <strong className="text-cafe-espresso">Cafe:</strong> {cafeConfig.name}
             </p>
+            {cafeConfig.contact.email && (
+              <p>
+                <strong className="text-cafe-espresso">Email:</strong>{" "}
+                <a
+                  href={`mailto:${cafeConfig.contact.email}`}
+                  className="text-cafe-terracotta underline hover:text-cafe-espresso"
+                >
+                  {cafeConfig.contact.email}
+                </a>
+              </p>
+            )}
+            {cafeConfig.contact.phone && (
+              <p>
+                <strong className="text-cafe-espresso">Phone:</strong> {cafeConfig.contact.phone}
+              </p>
+            )}
             <p>
-              <strong className="text-cafe-espresso">Email:</strong>{" "}
-              <a
-                href={`mailto:${cafeConfig.contact.email}`}
-                className="text-cafe-terracotta underline hover:text-cafe-espresso"
-              >
-                {cafeConfig.contact.email}
-              </a>
-            </p>
-            <p>
-              <strong className="text-cafe-espresso">Phone:</strong> {cafeConfig.contact.phone}
-            </p>
-            <p>
-              <strong className="text-cafe-espresso">Address:</strong> {cafeConfig.address.street}, {cafeConfig.address.city} {cafeConfig.address.postcode}
+              <strong className="text-cafe-espresso">Address:</strong> {cafeConfig.address.display}
             </p>
           </div>
         </section>

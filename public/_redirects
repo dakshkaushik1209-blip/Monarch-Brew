@@ -1,0 +1,5 @@
+# Canonical domain redirect: www to apex
+https://www.monarchbrew.in/* https://monarchbrew.in/:splat 301
+
+# Custom 404 fallback page
+/* /404.html 404

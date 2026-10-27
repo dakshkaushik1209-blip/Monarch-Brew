@@ -1,7 +1,13 @@
 import type { MetadataRoute } from "next";
-import { getSiteUrl } from "@/config/site";
+import { getSiteUrl, isDemoMode } from "@/config/site";
+
+export const dynamic = "force-static";
 
 export default function sitemap(): MetadataRoute.Sitemap {
+  if (isDemoMode()) {
+    return [];
+  }
+
   const siteUrl = getSiteUrl();
   const routes = ["", "/menu", "/about", "/gallery", "/visit", "/privacy", "/terms"];
   const currentDate = new Date().toISOString();

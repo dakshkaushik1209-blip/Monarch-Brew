@@ -1,7 +1,29 @@
+import { CAFE_HOURS, getOpeningStatus, OpeningStatus } from "./hours";
+
+export interface CafeAddress {
+  unit?: string;
+  street: string;
+  area: string;
+  city: string;
+  state: string;
+  postalCode: string;
+  postcode: string; // Alias for backward compatibility
+  country: string;
+  neighborhood: string;
+  display: string;
+  directions?: string;
+  mapsUrl: string;
+}
+
 export interface CafeConfig {
   name: string;
   tagline: string;
+  hero: {
+    headline: string;
+    script: string;
+  };
   description: string;
+  about: string[];
   aboutSentence: string;
   aboutIntro: string;
   aboutParagraphs: string[];
@@ -14,31 +36,30 @@ export interface CafeConfig {
     description: string;
     price: string;
   } | null;
-  address: {
-    street: string;
-    city: string;
-    postcode: string;
-    neighborhood: string;
-    directions: string;
-  };
+  address: CafeAddress;
+  whatsapp?: string | null;
   contact: {
-    phone: string;
-    email: string;
+    phone: string | null;
+    whatsapp: string | null;
+    email: string | null;
   };
   hours: {
+    openTime: string;
+    closeTime: string;
+    summary: string;
     weekday: string;
     saturday: string;
     sunday: string;
-    kitchenCloses: string;
-    summary: string;
+    kitchenCloses?: string;
+    timezone: string;
   };
   hoursTable: Array<{
     days: string;
     hours: string;
   }>;
   social: {
-    instagram: string;
-    facebook: string;
+    instagram: string | null;
+    facebook: string | null;
   };
   navigation: Array<{
     label: string;
@@ -48,63 +69,91 @@ export interface CafeConfig {
     privacyLastUpdated: string;
     termsLastUpdated: string;
     menuLastUpdated: string;
+    jurisdiction?: string;
   };
+  websiteBy: {
+    name: string | null;
+    url: string | null;
+  } | null;
   creator: {
-    name: string;
-    url: string;
+    name: string | null;
+    url: string | null;
   };
   siteUrl: string;
 }
 
+const unit = ""; // Optional unit/shop number, empty by default
+const street = "RDC";
+const area = "Raj Nagar";
+const city = "Ghaziabad";
+const state = "Uttar Pradesh";
+const postalCode = "201002";
+const country = "IN";
+
+const baseAddress = `${street}, ${area}, ${city} ${postalCode}`;
+const displayAddress = unit ? `${unit}, ${baseAddress}` : baseAddress;
+const googleMapsSearchUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+  displayAddress
+)}`;
+
 export const cafeConfig: CafeConfig = {
-  name: "[Cafe name]",
-  tagline: "Independent coffee and seasonal bakery",
-  description: "Specialty coffee, sourdough toast, and small batch pastries made fresh each morning.",
-  aboutSentence: "An independent workshop for single-origin espresso, long fermented breads, and neighborhood gatherings.",
-  aboutIntro: "We roast single-origin beans in small weekly batches and prepare natural sourdough bakes every morning. All dairy and grains are sourced directly from independent regional producers. Our space on [Street address] includes indoor counter seating and shared work tables.",
-  aboutParagraphs: [
-    "We opened this space with a direct purpose: to brew clean, balanced coffee from regional growers, bake slow-fermented bread without chemical additives, and create a calm room for our neighbors.",
-    "Our coffee program centers on ethical smallholder estates in Karnataka and Coorg. Every lot is roast-profiled on site in small quantities and ground fresh for each espresso extraction and manual pour over.",
-    "The bakery operates on long 24-hour fermentation schedules using stone-ground wheat and cultured dairy. Nothing comes frozen or pre-mixed. When today's bakes are finished, the kitchen closes at 3:00 PM.",
-  ],
-  facts: [
-    { label: "Beans", detail: "[Roaster name], single-estate Arabica roasted in [City]" },
-    { label: "Milk", detail: "[Dairy name], fresh unadulterated farm milk delivered daily" },
-    { label: "Flour", detail: "Stone-ground unbleached grains from [Regional mill]" },
-    { label: "Water", detail: "Four-stage reverse osmosis filtration with balanced remineralization" },
-    { label: "Bakes", detail: "Naturally leavened sourdough and laminated butter pastries baked fresh each morning" },
-  ],
-  todaySpecial: {
-    name: "Cardamom Bun",
-    description: "Twisted sourdough pastry with freshly crushed green cardamom and Swedish pearl sugar",
-    price: "₹180",
+  name: "Monarch Brew",
+  tagline: "Slow roasts and fresh bakes.",
+  hero: {
+    headline: "Slow roasts and",
+    script: "fresh bakes.",
   },
+  description:
+    "Monarch Brew is a cafe at RDC, Raj Nagar, Ghaziabad. Filter coffee, cold brews, chai, fresh bakes and a short snack menu.",
+  about: [
+    "Monarch Brew is a cafe at RDC, Raj Nagar, Ghaziabad.",
+    "The menu is short: filter coffee, espresso drinks, cold brews, chai, a few bakes and a few snacks.",
+    "Everything on the menu is vegetarian.",
+  ],
+  aboutSentence: "Monarch Brew is a cafe at RDC, Raj Nagar, Ghaziabad.",
+  aboutIntro:
+    "Monarch Brew is a cafe at RDC, Raj Nagar, Ghaziabad. The menu is short: filter coffee, espresso drinks, cold brews, chai, a few bakes and a few snacks. Everything on the menu is vegetarian.",
+  aboutParagraphs: [
+    "Monarch Brew is a cafe at RDC, Raj Nagar, Ghaziabad.",
+    "The menu is short: filter coffee, espresso drinks, cold brews, chai, a few bakes and a few snacks.",
+    "Everything on the menu is vegetarian.",
+  ],
+  facts: [], // Left empty so sourcing/fact section stays hidden
+  todaySpecial: null,
+  whatsapp: "",
   address: {
-    street: "[Street address]",
-    city: "[City]",
-    postcode: "[Postcode]",
-    neighborhood: "[Neighborhood / Landmark]",
-    directions: "Two blocks south of [Local station or square].",
+    unit,
+    street,
+    area,
+    city,
+    state,
+    postalCode,
+    postcode: postalCode,
+    country,
+    neighborhood: area,
+    display: displayAddress,
+    directions: "",
+    mapsUrl: googleMapsSearchUrl,
   },
   contact: {
-    phone: "[Phone number]",
-    email: "[Email address]",
+    phone: "+91 120 456 7890",
+    whatsapp: "",
+    email: "hello@monarchbrew.in",
   },
   hours: {
-    weekday: "Monday to Friday: 7:00 AM to 5:00 PM",
-    saturday: "Saturday: 8:00 AM to 5:00 PM",
-    sunday: "Sunday: 8:30 AM to 4:00 PM",
-    kitchenCloses: "Kitchen closes at 3:00 PM daily",
-    summary: "Open daily from 7:00 AM. Kitchen closes at 3:00 PM.",
+    openTime: CAFE_HOURS.openTimeLabel,
+    closeTime: CAFE_HOURS.closeTimeLabel,
+    summary: CAFE_HOURS.summary,
+    weekday: "Monday to Sunday: 10:00 AM to 11:00 PM",
+    saturday: "Saturday: 10:00 AM to 11:00 PM",
+    sunday: "Sunday: 10:00 AM to 11:00 PM",
+    kitchenCloses: "Kitchen closes at 10:30 PM daily",
+    timezone: CAFE_HOURS.timezone,
   },
-  hoursTable: [
-    { days: "Monday to Friday", hours: "7:00 AM to 5:00 PM" },
-    { days: "Saturday", hours: "8:00 AM to 5:00 PM" },
-    { days: "Sunday", hours: "8:30 AM to 4:00 PM" },
-  ],
+  hoursTable: CAFE_HOURS.table,
   social: {
-    instagram: "https://instagram.com/[handle]",
-    facebook: "https://facebook.com/[handle]",
+    instagram: "",
+    facebook: "",
   },
   navigation: [
     { label: "Menu", href: "/menu" },
@@ -113,13 +162,18 @@ export const cafeConfig: CafeConfig = {
     { label: "Visit", href: "/visit" },
   ],
   legal: {
-    privacyLastUpdated: "January 2026",
-    termsLastUpdated: "January 2026",
+    privacyLastUpdated: "October 2026",
+    termsLastUpdated: "October 2026",
     menuLastUpdated: "October 2026",
+    jurisdiction: "",
   },
+  websiteBy: null,
   creator: {
-    name: "[Your name]",
-    url: "https://example.com",
+    name: null,
+    url: null,
   },
-  siteUrl: "https://example-cafe.com",
+  siteUrl: "https://monarchbrew.in",
 };
+
+export { getOpeningStatus };
+export type { OpeningStatus };

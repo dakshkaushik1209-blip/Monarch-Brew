@@ -1,0 +1,535 @@
+/* ==============================================================================
+   HERO STICKER & SCRIPT STYLESHEET (COMPACT 2-COLUMN LAYOUT)
+   CSP-compliant: Zero inline <style> injection.
+   Tokens: theme variables, no hardcoded colors, strictly flat tones only.
+   Motion: composite-only properties (transform, opacity, clip-path, stroke-dashoffset).
+   ============================================================================== */
+
+:root {
+  --hero-bg: var(--color-cream, #F4EADB);
+  --hero-ink: var(--color-espresso, #3B2A20);
+  --hero-accent: var(--color-terracotta, #B8643F);
+  --hero-olive: var(--color-olive, #6B705C);
+  --hero-muted: #5A4436;
+}
+
+/* Base Hero Layout: Content-based height with moderate padding, clears sticky navbar */
+.hero-stk-section {
+  position: relative;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--hero-bg);
+  overflow-x: clip;
+  padding-top: clamp(4.5rem, 7vw, 5.5rem);
+  padding-bottom: clamp(2.5rem, 4.5vw, 3.5rem);
+}
+
+/* Two-column grid container (matches navbar max-w-site) */
+.hero-stage {
+  position: relative;
+  width: 100%;
+  max-width: 75rem; /* ~1200px max width matching site container */
+  margin: 0 auto;
+  padding: 0 1rem;
+  display: grid;
+  grid-template-columns: 1fr;
+  align-items: center;
+  gap: 2rem;
+}
+
+@media (min-width: 640px) {
+  .hero-stage {
+    padding: 0 1.5rem;
+    gap: 2.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .hero-stage {
+    padding: 0 2rem;
+    grid-template-columns: 1.15fr 0.85fr; /* ~57.5% left, ~42.5% right */
+    gap: 3.5rem;
+  }
+}
+
+/* ==============================================================================
+   LEFT COLUMN: HEADLINE, STATUS, BUTTONS (LEFT ALIGNED)
+   ============================================================================== */
+
+.hero-left {
+  position: relative;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+}
+
+/* Stacked H1 container */
+.hero-head {
+  position: relative;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+  user-select: text;
+  width: 100%;
+}
+
+/* Accessible visually hidden full headline */
+.hero-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Line 1: "Slow roasts and" in Fraunces */
+.hero-line1 {
+  display: block;
+  font-family: var(--font-fraunces), Georgia, serif;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  color: var(--hero-ink);
+  font-size: clamp(2.35rem, 4.8vw, 4.25rem);
+  line-height: 1.06;
+  text-align: left;
+}
+
+.hero-line1-ch {
+  display: inline-block;
+  will-change: transform, opacity;
+}
+
+/* Line 2: Script Word Button ("fresh bakes.") */
+.hero-script-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  background: none;
+  border: none;
+  padding: 0;
+  margin-top: -0.08em;
+  margin-left: -0.32em; /* Flush left alignment with Line 1 */
+  cursor: pointer;
+  color: var(--hero-accent);
+  border-radius: 4px;
+  outline: none;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform;
+  max-width: 100%;
+}
+
+.hero-script-wrap:focus-visible {
+  outline: 2px solid var(--hero-accent);
+  outline-offset: 4px;
+}
+
+.hero-script-wrap:active {
+  transform: scale(0.98);
+}
+
+.hero-script-svg {
+  display: block;
+  height: auto;
+  max-width: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+
+/* Script SVG path layers */
+.hero-script-path {
+  fill: none;
+  stroke: var(--hero-accent);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+  will-change: stroke-dashoffset;
+}
+
+/* Shadow and highlight script layers for depth (flat tones only) */
+.hero-script-shadow .hero-script-path {
+  stroke: var(--hero-ink);
+  stroke-opacity: 0.16;
+}
+
+.hero-script-hl .hero-script-path {
+  stroke: #ffffff;
+  stroke-opacity: 0.22;
+}
+
+.hero-script-dot {
+  fill: var(--hero-accent);
+  transform-box: fill-box;
+  transform-origin: center;
+  will-change: transform, opacity;
+}
+
+.hero-script-shadow .hero-script-dot {
+  fill: var(--hero-ink);
+  fill-opacity: 0.16;
+}
+
+.hero-script-hl .hero-script-dot {
+  fill: #ffffff;
+  fill-opacity: 0.22;
+}
+
+/* Replay erase animation */
+.hero-script-wrap[data-out="true"] .hero-script-path {
+  animation: hero-erase 0.35s cubic-bezier(0.4, 0, 1, 1) forwards;
+}
+
+.hero-script-wrap[data-out="true"] .hero-script-dot {
+  animation: hero-dot-out 0.25s ease-in forwards;
+}
+
+/* Supporting status line */
+.hero-status {
+  margin-top: 1.15rem;
+  max-width: 32rem;
+  font-size: clamp(0.875rem, 1.4vw, 0.975rem);
+  font-weight: 500;
+  line-height: 1.5;
+  color: var(--hero-muted);
+  text-align: left;
+}
+
+/* Action Buttons row (side by side) */
+.hero-actions {
+  margin-top: 1.4rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.85rem;
+}
+
+/* ==============================================================================
+   RIGHT COLUMN: COFFEE CUP & CAFE STICKERS CLUSTER
+   ============================================================================== */
+
+.hero-right {
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Cup Cluster Container (Draggable stickers surround the coffee cup) */
+.hero-cup-cluster {
+  position: relative;
+  width: 100%;
+  max-width: 27rem; /* ~432px */
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (max-width: 640px) {
+  .hero-cup-cluster {
+    max-width: 14.5rem; /* ~230px compact cup on mobile */
+    margin-top: 0.5rem;
+  }
+}
+
+/* ==============================================================================
+   STICKERS ARCHITECTURE (TUCKED AROUND CUP)
+   ============================================================================== */
+
+.hero-stk {
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  z-index: 5;
+  width: var(--w);
+  height: var(--h);
+  margin: calc(var(--h) / -2) 0 0 calc(var(--w) / -2);
+  touch-action: none;
+  will-change: transform;
+}
+
+.hero-stk.is-behind {
+  z-index: 2;
+}
+
+.hero-stk.is-top {
+  z-index: 10;
+}
+
+@media (max-width: 640px) {
+  .hero-stk {
+    transform-origin: center;
+    scale: 0.65;
+  }
+}
+
+/* Show at most 2 stickers on small mobile (< 640px) to prevent clutter around compact cup */
+@media (max-width: 640px) {
+  .hero-stk.hero-stk-hide-mobile {
+    display: none !important;
+  }
+}
+
+.hero-stk-in,
+.hero-stk-bob {
+  width: 100%;
+  height: 100%;
+}
+
+/* Idle floating bob on stickers (transform only) */
+.hero-stk-bob {
+  animation: hero-bob 6s ease-in-out infinite;
+  animation-delay: var(--bd, 0s);
+  will-change: transform;
+}
+
+.hero-stk.is-drag .hero-stk-bob,
+.hero-paused .hero-stk-bob {
+  animation-play-state: paused;
+}
+
+/* Sticker Body (Illustration disc / oval) */
+.hero-stk-body {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  overflow: hidden;
+  background-color: var(--c);
+  rotate: var(--r);
+  cursor: grab;
+  outline: none;
+  transition: background-color 0.2s, box-shadow 0.2s;
+  box-shadow:
+    inset 0 0 0 0.028em rgba(255, 255, 255, 0.45),
+    inset 0 -0.045em 0.08em rgba(59, 42, 32, 0.12),
+    0 calc(0.02em + var(--lift, 0) * 0.14em) calc(0.04em + var(--lift, 0) * 0.2em) rgba(59, 42, 32, calc(0.18 + var(--lift, 0) * 0.08));
+}
+
+.hero-stk.is-drag .hero-stk-body {
+  cursor: grabbing;
+}
+
+.hero-stk-body:focus-visible {
+  outline: 2px solid var(--hero-ink);
+  outline-offset: 4px;
+}
+
+/* Flat translucent diagonal highlight with hard edges (flat tones only) */
+.hero-stk-body::after {
+  content: "";
+  position: absolute;
+  inset: -30%;
+  background-color: rgba(255, 255, 255, 0.26);
+  clip-path: polygon(25% 0%, 52% 0%, 36% 100%, 9% 100%);
+  transform: translateX(-100%);
+  transition: transform 0.75s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: none;
+}
+
+.hero-stk-body:hover::after,
+.hero-stk-body:focus-visible::after,
+.hero-stk.is-drag .hero-stk-body::after {
+  transform: translateX(100%);
+}
+
+.hero-item-svg {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: var(--f);
+  height: var(--f);
+  margin: calc(var(--f) / -2) 0 0 calc(var(--f) / -2);
+  max-width: none;
+  overflow: visible;
+  pointer-events: none;
+}
+
+/* ==============================================================================
+   ANIMATION KEYFRAMES (Transform, Opacity, Clip-path, Dashoffset ONLY)
+   ============================================================================== */
+
+@keyframes hero-rise {
+  0% {
+    opacity: 0;
+    transform: translateY(0.35em);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes hero-draw {
+  0% {
+    stroke-dashoffset: 1;
+  }
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes hero-erase {
+  0% {
+    stroke-dashoffset: 0;
+  }
+  100% {
+    stroke-dashoffset: 1;
+  }
+}
+
+@keyframes hero-dot-in {
+  0% {
+    opacity: 0;
+    transform: scale(0);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes hero-dot-out {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0);
+  }
+}
+
+@keyframes hero-bob {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-0.18em);
+  }
+}
+
+@keyframes hero-slap {
+  0% {
+    opacity: 0;
+    transform: scale(1.6) rotate(var(--spin, 16deg));
+  }
+  70% {
+    opacity: 1;
+    transform: scale(0.94) rotate(0deg);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+/* ==============================================================================
+   ENTRANCE BEHAVIOR & PROGRESSIVE ENHANCEMENT
+   Default: Visible (so if JS or observer fails, everything is 100% visible)
+   ============================================================================== */
+
+/* When JS is initialized, hide temporarily until animated in */
+.hero-js-ready:not([data-in="true"]) .hero-line1-ch,
+.hero-js-ready:not([data-in="true"]) .hero-script-path,
+.hero-js-ready:not([data-in="true"]) .hero-script-dot,
+.hero-js-ready:not([data-in="true"]) .hero-stk-in {
+  opacity: 0;
+}
+
+/* When triggered, run entrance animations */
+.hero-js-ready[data-in="true"] .hero-line1-ch {
+  animation: hero-rise 0.85s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: calc(var(--i, 0) * 28ms + var(--intro-delay, 0s));
+}
+
+.hero-js-ready[data-in="true"] .hero-script-path {
+  opacity: 1;
+  stroke-dasharray: 1;
+  animation: hero-draw var(--dur, 0.4s) cubic-bezier(0.45, 0.05, 0.4, 1) both;
+  animation-delay: calc(var(--base, 0.35s) + var(--d, 0s) + var(--intro-delay, 0s));
+}
+
+.hero-js-ready[data-in="true"] .hero-script-dot {
+  animation: hero-dot-in 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  animation-delay: calc(var(--d, 0s) + var(--intro-delay, 0s));
+}
+
+.hero-js-ready[data-in="true"] .hero-stk-in {
+  animation: hero-slap 0.75s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  animation-delay: calc(var(--sd, 0.6s) + var(--intro-delay, 0s));
+}
+
+/* ==============================================================================
+   SMOOTH SCROLL CUE ANIMATION (Gentle breath, compositor-only transform)
+   ============================================================================== */
+.hero-scroll-cue-wrap {
+  width: 100%;
+  margin-top: 1.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.hero-scroll-cue {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem 0.75rem;
+  border-radius: 2px;
+}
+
+.hero-scroll-arrow {
+  animation: hero-scroll-bounce 2.2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+@keyframes hero-scroll-bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(4px);
+  }
+}
+
+/* ==============================================================================
+   PREFERS-REDUCED-MOTION (No springs, no bobs, no draw, instant visibility)
+   ============================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  .hero-line1-ch,
+  .hero-script-path,
+  .hero-script-dot,
+  .hero-stk-in,
+  .hero-stk-bob,
+  .hero-scroll-arrow {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+    stroke-dashoffset: 0 !important;
+  }
+
+  .hero-script-wrap[data-out="true"] .hero-script-path,
+  .hero-script-wrap[data-out="true"] .hero-script-dot {
+    animation: none !important;
+  }
+}

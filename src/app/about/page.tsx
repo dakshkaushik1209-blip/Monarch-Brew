@@ -8,10 +8,10 @@ import { Reveal } from "@/components/Reveal";
 
 export const metadata: Metadata = {
   title: "About",
-  description: `${cafeConfig.aboutSentence} Located on ${cafeConfig.address.street}.`,
+  description: `Learn about ${cafeConfig.name}, an artisanal vegetarian cafe at ${cafeConfig.address.display}. Specialty single-origin filter roasts, hand-laminated bakes, and community gatherings.`,
   openGraph: {
     title: `About | ${cafeConfig.name}`,
-    description: `${cafeConfig.aboutSentence} Located on ${cafeConfig.address.street}.`,
+    description: `Learn about ${cafeConfig.name}, an artisanal vegetarian cafe at ${cafeConfig.address.display}. Specialty single-origin filter roasts, hand-laminated bakes, and community gatherings.`,
     url: `${cafeConfig.siteUrl}/about`,
     siteName: cafeConfig.name,
     locale: "en_US",
@@ -20,24 +20,18 @@ export const metadata: Metadata = {
 };
 
 export default function AboutPage() {
-  const isDev = process.env.NODE_ENV !== "production";
-  const hasParagraphs = cafeConfig.aboutParagraphs && cafeConfig.aboutParagraphs.length > 0;
-  const showStorySection = hasParagraphs || isDev;
-
   return (
     <div className="py-8 sm:py-16">
       <div className="mx-auto flex max-w-site flex-col gap-16 px-4 sm:gap-24 sm:px-6 lg:px-8">
         {/* 1. Header */}
         <header className="flex flex-col items-start gap-4">
           <Reveal className="flex flex-col items-start gap-3" isHero={true}>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 text-xs font-medium text-cafe-olive">
               <BotanicalSprig className="h-5 w-5 text-cafe-olive" />
-              <span className="inline-block rounded-[2px] border border-cafe-border bg-cafe-cream-deep/80 px-3 py-1 text-[11px] font-semibold uppercase tracking-widest text-cafe-olive">
-                Our Workshop
-              </span>
+              <span>About us</span>
             </div>
-            <h1 className="font-heading text-4xl font-semibold tracking-tight text-cafe-espresso sm:text-6xl">
-              About our <em className="font-normal italic text-cafe-terracotta">workshop</em> and bakery
+            <h1 className="font-heading text-4xl font-semibold tracking-tight text-cafe-espresso text-balance sm:text-6xl">
+              About {cafeConfig.name}
             </h1>
             <p className="max-w-2xl text-base leading-relaxed text-cafe-espresso/85 sm:text-lg">
               {cafeConfig.aboutSentence}
@@ -45,61 +39,49 @@ export default function AboutPage() {
           </Reveal>
         </header>
 
-        {/* 2. Story: Two column editorial layout */}
-        {showStorySection && (
-          <section aria-labelledby="story-heading">
-            <div className="grid grid-cols-1 items-start gap-12 lg:grid-cols-12 lg:gap-14">
-              {/* Left Column: Short paragraphs */}
-              <Reveal className="flex flex-col gap-5 text-sm leading-relaxed text-cafe-espresso/85 sm:text-base lg:col-span-7">
-                <h2 id="story-heading" className="sr-only">
-                  Our Story
-                </h2>
-                {hasParagraphs ? (
-                  cafeConfig.aboutParagraphs.map((paragraph, index) => (
-                    <p key={index}>{paragraph}</p>
-                  ))
-                ) : isDev ? (
-                  <div className="rounded-[2px] border border-cafe-border bg-cafe-cream-deep/60 p-5 text-xs text-cafe-olive">
-                    <p className="font-semibold text-cafe-espresso">
-                      Story Placeholder (Development only):
-                    </p>
-                    <p className="mt-1">
-                      Add 2 to 4 paragraphs in src/config/cafe.ts under aboutParagraphs. In production, this section will automatically remain hidden if the array is empty.
-                    </p>
-                  </div>
-                ) : null}
-              </Reveal>
+        {/* 2. Plain Sentences: Two column editorial layout */}
+        <section aria-labelledby="story-heading">
+          <div className="grid grid-cols-1 items-start gap-12 lg:grid-cols-12 lg:gap-14">
+            {/* Left Column: Plain sentences */}
+            <Reveal className="flex flex-col gap-5 text-sm leading-relaxed text-cafe-espresso/85 sm:text-base lg:col-span-7">
+              <h2 id="story-heading" className="sr-only">
+                About our cafe
+              </h2>
+              {cafeConfig.about.map((sentence, index) => (
+                <p key={index}>{sentence}</p>
+              ))}
+            </Reveal>
 
-              {/* Right Column: Tall photo slot */}
-              <div className="lg:col-span-5">
-                <Reveal delay={0.2} reverseDelay={0.1}>
-                  <Photo
-                    alt="Morning bread kneading and coffee grinding counter"
-                    aspectRatio="3/4"
-                    label="Morning bake preparation"
-                    priority
-                    illustration="sprig"
-                    className="w-full"
-                  />
-                </Reveal>
-              </div>
+            {/* Right Column: Tall photo slot */}
+            <div className="lg:col-span-5">
+              <Reveal delay={0.2} reverseDelay={0.1}>
+                <Photo
+                  src="/images/about/about-main.png"
+                  alt="Coffee brewing and bake counter"
+                  aspectRatio="3/4"
+                  label="Daily coffee and bakes"
+                  priority
+                  illustration="sprig"
+                  className="w-full"
+                />
+              </Reveal>
             </div>
-          </section>
-        )}
+          </div>
+        </section>
 
         {/* 3. How we make it: Definition list of concrete facts */}
         {cafeConfig.facts && cafeConfig.facts.length > 0 && (
           <section aria-labelledby="facts-heading">
             <Reveal className="flex flex-col gap-6 border-t border-cafe-border pt-12 sm:pt-16">
               <div>
-                <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-cafe-olive">
-                  Sourcing & Methods
+                <span className="text-xs font-medium text-cafe-olive">
+                  Sourcing and methods
                 </span>
                 <h2
                   id="facts-heading"
-                  className="mt-2 font-heading text-3xl font-semibold tracking-tight text-cafe-espresso sm:text-4xl"
+                  className="mt-1 font-heading text-3xl font-semibold tracking-tight text-cafe-espresso text-balance sm:text-4xl"
                 >
-                  How we <em className="font-normal italic text-cafe-terracotta">make</em> it
+                  How we make it
                 </h2>
                 <p className="mt-2 text-sm text-cafe-espresso/80">
                   Concrete standards behind our daily coffee bar and bakehouse.
@@ -130,14 +112,14 @@ export default function AboutPage() {
           <section aria-labelledby="team-heading">
             <Reveal className="flex flex-col gap-6 border-t border-cafe-border pt-12 sm:pt-16">
               <div>
-                <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-cafe-olive">
-                  People
+                <span className="text-xs font-medium text-cafe-olive">
+                  The team
                 </span>
                 <h2
                   id="team-heading"
-                  className="mt-2 font-heading text-3xl font-semibold tracking-tight text-cafe-espresso sm:text-4xl"
+                  className="mt-1 font-heading text-3xl font-semibold tracking-tight text-cafe-espresso text-balance sm:text-4xl"
                 >
-                  The <em className="font-normal italic text-cafe-terracotta">team</em>
+                  The craft team
                 </h2>
               </div>
 
@@ -178,19 +160,18 @@ export default function AboutPage() {
         >
           <Reveal className="flex flex-col items-start justify-between gap-8 lg:flex-row lg:items-center">
             <div className="flex flex-col gap-3 max-w-xl">
-              <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-cafe-olive">
-                Join Us
+              <span className="text-xs font-medium text-cafe-olive">
+                Join us
               </span>
               <h2
                 id="visit-closing-heading"
-                className="font-heading text-2xl font-semibold tracking-tight text-cafe-espresso sm:text-3xl"
+                className="font-heading text-2xl font-semibold tracking-tight text-cafe-espresso text-balance sm:text-3xl"
               >
-                Visit us on <em className="font-normal italic text-cafe-terracotta">{cafeConfig.address.street}</em>
+                Visit {cafeConfig.name}
               </h2>
               <p className="text-sm leading-relaxed text-cafe-espresso/85">
-                {cafeConfig.address.street}, {cafeConfig.address.city}. {cafeConfig.hours.summary}
+                {cafeConfig.address.display}. {cafeConfig.hours.summary}
               </p>
-              <p className="text-xs text-cafe-olive">{cafeConfig.address.directions}</p>
             </div>
 
             <div className="flex flex-wrap items-center gap-4">

@@ -5,19 +5,17 @@ import { type MenuCategory, formatPrice } from "@/data/menu";
 import { Photo } from "@/components/Photo";
 import { Reveal } from "@/components/Reveal";
 import { THEME_COLORS } from "@/config/theme";
-import { useOrderTray } from "@/components/OrderTrayContext";
 
 interface MenuInteractiveViewProps {
   categories: MenuCategory[];
 }
 
 /**
- * Printed Cafe Menu View adapted from 21st.dev Restaurant Menu Block (id: 27052).
- * Features classic dotted leaders between item names and prices, small-caps section tags,
- * interactive row hover shift, and accessible dietary filters.
+ * Classic Printed Cafe Menu View adapted from 21st.dev Restaurant Menu Block.
+ * Features classic dotted leaders between item names and prices,
+ * interactive row hover shift, dietary filters, and allergen disclosures.
  */
 export function MenuInteractiveView({ categories }: MenuInteractiveViewProps) {
-  const { addItem } = useOrderTray();
   const [activeCategory, setActiveCategory] = useState<string>(categories[0]?.id || "");
   const [selectedDiet, setSelectedDiet] = useState<"all" | "veg">("all");
   const [announcement, setAnnouncement] = useState<string>("");
@@ -84,7 +82,7 @@ export function MenuInteractiveView({ categories }: MenuInteractiveViewProps) {
       </div>
 
       {/* Sticky Category Tabs & Diet Filter Controls Bar */}
-      <div className="sticky top-16 z-30 border-y border-cafe-border bg-cafe-cream/95 backdrop-blur-md print-hidden print:hidden">
+      <div className="sticky top-16 z-30 border-y border-cafe-border bg-cafe-cream print-hidden print:hidden">
         <div className="mx-auto flex max-w-site flex-col gap-3 px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
           {/* Horizontal scrollable category anchor tabs */}
           <nav
@@ -99,7 +97,7 @@ export function MenuInteractiveView({ categories }: MenuInteractiveViewProps) {
                   href={`#${cat.id}`}
                   onClick={() => handleTabClick(cat.id)}
                   aria-current={isActive ? "true" : undefined}
-                  className={`inline-flex min-h-[44px] items-center whitespace-nowrap px-3.5 py-2 text-xs font-semibold uppercase tracking-wider transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cafe-terracotta ${
+                  className={`inline-flex min-h-[44px] items-center whitespace-nowrap px-3.5 py-2 text-xs font-semibold uppercase tracking-wider transition-colors duration-fast focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cafe-terracotta ${
                     isActive
                       ? "border-b-2 border-cafe-terracotta text-cafe-terracotta"
                       : "border-b-2 border-transparent text-cafe-espresso/70 hover:text-cafe-terracotta"
@@ -125,7 +123,7 @@ export function MenuInteractiveView({ categories }: MenuInteractiveViewProps) {
                 type="button"
                 onClick={() => handleDietChange("all")}
                 aria-pressed={selectedDiet === "all"}
-                className={`inline-flex min-h-[44px] items-center rounded-[2px] border px-3.5 py-2 text-xs font-semibold uppercase tracking-wider transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cafe-terracotta ${
+                className={`inline-flex min-h-[44px] items-center rounded-[2px] border px-3.5 py-2 text-xs font-semibold uppercase tracking-wider transition-[background-color,border-color,color] duration-fast focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cafe-terracotta active:scale-[0.98] motion-reduce:active:scale-100 ${
                   selectedDiet === "all"
                     ? "border-cafe-espresso bg-cafe-espresso text-cafe-cream"
                     : "border-cafe-border bg-cafe-cream text-cafe-espresso hover:bg-cafe-cream-deep"
@@ -137,7 +135,7 @@ export function MenuInteractiveView({ categories }: MenuInteractiveViewProps) {
                 type="button"
                 onClick={() => handleDietChange("veg")}
                 aria-pressed={selectedDiet === "veg"}
-                className={`inline-flex min-h-[44px] items-center gap-1.5 rounded-[2px] border px-3.5 py-2 text-xs font-semibold uppercase tracking-wider transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cafe-terracotta ${
+                className={`inline-flex min-h-[44px] items-center gap-1.5 rounded-[2px] border px-3.5 py-2 text-xs font-semibold uppercase tracking-wider transition-[background-color,border-color,color] duration-fast focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cafe-terracotta active:scale-[0.98] motion-reduce:active:scale-100 ${
                   selectedDiet === "veg"
                     ? "border-cafe-espresso bg-cafe-espresso text-cafe-cream"
                     : "border-cafe-border bg-cafe-cream text-cafe-espresso hover:bg-cafe-cream-deep"
@@ -192,16 +190,13 @@ export function MenuInteractiveView({ categories }: MenuInteractiveViewProps) {
               as="section"
               className="scroll-mt-36 print-break-inside-avoid"
             >
-              {/* Category Header with small-caps subtitle */}
+              {/* Category Header */}
               <div className="border-b-2 border-cafe-border/80 pb-4">
                 <div className="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between">
                   <div>
-                    <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-cafe-olive">
-                      Course / Section
-                    </span>
                     <h2
                       id={`heading-${category.id}`}
-                      className="mt-1 font-heading text-2xl font-semibold tracking-tight text-cafe-espresso sm:text-3xl"
+                      className="font-heading text-2xl font-semibold tracking-tight text-cafe-espresso text-balance sm:text-3xl"
                     >
                       {category.name}
                     </h2>
@@ -264,28 +259,15 @@ export function MenuInteractiveView({ categories }: MenuInteractiveViewProps) {
                             )}
                           </div>
 
-                          {/* Dotted Leader Line (21st.dev Restaurant Menu Block pattern) */}
+                          {/* Dotted Leader Line */}
                           <span
                             aria-hidden="true"
                             className="min-w-6 flex-1 -translate-y-1 border-b border-dotted border-cafe-border transition-colors duration-200 group-hover:border-cafe-terracotta/50"
                           />
 
-                          <div className="flex items-center gap-2.5">
-                            <span className="font-heading text-base font-semibold text-cafe-espresso transition-colors duration-200 group-hover:text-cafe-terracotta tabular-nums sm:text-lg">
-                              {formatPrice(item.price)}
-                            </span>
-                            <button
-                              type="button"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                addItem(item);
-                              }}
-                              aria-label={`Add ${item.name} to order tray`}
-                              className="rounded-[2px] border border-cafe-border bg-cafe-cream px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-cafe-espresso shadow-2xs transition-colors hover:border-cafe-terracotta hover:bg-cafe-terracotta hover:text-cafe-cream focus-visible:outline-2 focus-visible:outline-cafe-espresso"
-                            >
-                              + Add
-                            </button>
-                          </div>
+                          <span className="font-heading text-base font-semibold text-cafe-espresso transition-colors duration-200 group-hover:text-cafe-terracotta tabular-nums sm:text-lg">
+                            {formatPrice(item.price)}
+                          </span>
                         </div>
 
                         {/* Description */}
@@ -303,8 +285,9 @@ export function MenuInteractiveView({ categories }: MenuInteractiveViewProps) {
 
                       {/* Photo slot if present */}
                       {item.photo && (
-                        <div className="hidden sm:block sm:w-28 sm:shrink-0">
+                        <div className="w-20 shrink-0 self-start sm:w-28">
                           <Photo
+                            src={item.photo.src}
                             alt={item.photo.label}
                             aspectRatio={item.photo.aspectRatio || "4/3"}
                             label={item.photo.label}

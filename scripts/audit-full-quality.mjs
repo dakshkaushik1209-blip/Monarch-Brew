@@ -52,7 +52,7 @@ async function runAudit() {
   // 1. Audit HTTP Endpoints & Security Headers
   console.log("--- 1. Testing Endpoints & Security Headers ---");
   for (const ep of staticEndpoints) {
-    const res = await page.goto(`${BASE_URL}${ep.path}`, { waitUntil: "networkidle" });
+    const res = await page.goto(`${BASE_URL}${ep.path}`, { waitUntil: "domcontentloaded" });
     const status = res.status();
     if (status !== ep.expectedStatus) {
       console.error(`[FAIL] Endpoint ${ep.path}: expected status ${ep.expectedStatus}, got ${status}`);
@@ -92,7 +92,7 @@ async function runAudit() {
   for (const vp of viewports) {
     await page.setViewportSize({ width: vp.width, height: vp.height });
     for (const p of pagesToTest) {
-      await page.goto(`${BASE_URL}${p.path}`, { waitUntil: "networkidle" });
+      await page.goto(`${BASE_URL}${p.path}`, { waitUntil: "domcontentloaded" });
       const overflow = await page.evaluate(() => {
         return document.documentElement.scrollWidth > window.innerWidth;
       });
@@ -108,7 +108,7 @@ async function runAudit() {
   console.log("\n--- 3. Mobile Touch Target Audit (375px) ---");
   await page.setViewportSize({ width: 375, height: 667 });
   for (const p of pagesToTest) {
-    await page.goto(`${BASE_URL}${p.path}`, { waitUntil: "networkidle" });
+    await page.goto(`${BASE_URL}${p.path}`, { waitUntil: "domcontentloaded" });
     const undersizedElements = await page.evaluate(() => {
       const elements = Array.from(document.querySelectorAll("button, a, input, select, textarea"));
       const failures = [];
@@ -145,7 +145,7 @@ async function runAudit() {
   // 4. Print Layout Audit
   console.log("\n--- 4. Print Layout Audit ---");
   for (const printPath of ["/menu", "/privacy", "/terms"]) {
-    await page.goto(`${BASE_URL}${printPath}`, { waitUntil: "networkidle" });
+    await page.goto(`${BASE_URL}${printPath}`, { waitUntil: "domcontentloaded" });
     await page.emulateMedia({ media: "print" });
 
     const printCheck = await page.evaluate(() => {
@@ -170,7 +170,7 @@ async function runAudit() {
   const internalLinks = new Set();
 
   for (const p of pagesToTest) {
-    await page.goto(`${BASE_URL}${p.path}`, { waitUntil: "networkidle" });
+    await page.goto(`${BASE_URL}${p.path}`, { waitUntil: "domcontentloaded" });
     const hrefs = await page.evaluate(() => {
       return Array.from(document.querySelectorAll("a[href]"))
         .map((a) => a.getAttribute("href"))
@@ -184,7 +184,7 @@ async function runAudit() {
 
   console.log(`Discovered ${internalLinks.size} unique internal routes to test.`);
   for (const link of internalLinks) {
-    const res = await page.goto(`${BASE_URL}${link}`, { waitUntil: "networkidle" });
+    const res = await page.goto(`${BASE_URL}${link}`, { waitUntil: "domcontentloaded" });
     const status = res.status();
     if (status !== 200) {
       console.error(`[FAIL] Broken link: ${link} returned status ${status}`);

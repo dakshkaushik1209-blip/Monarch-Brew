@@ -1,8 +1,9 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Clock, ChevronDown, ChevronUp, Sparkles } from "lucide-react";
+import { ChevronDown, ChevronUp } from "lucide-react";
 import { cafeConfig } from "@/config/cafe";
+import { getOpeningStatus, CAFE_HOURS } from "@/config/hours";
 
 interface RoutineStep {
   time: string;
@@ -13,35 +14,35 @@ interface RoutineStep {
 
 const ROUTINE_STEPS: RoutineStep[] = [
   {
-    time: "05:30 AM",
-    title: "Oven Ignition & Sourdough Proofing",
-    desc: "Bakers arrive to shape the overnight fermented country loaves and preheat the stone hearth deck.",
-  },
-  {
-    time: "07:00 AM",
-    title: "Doors Open & Espresso Dial-in",
-    desc: "Baristas taste the morning espresso shot, adjusting grind size and brew temperature for current humidity.",
+    time: "10:00 AM",
+    title: "Doors Open & Morning Service",
+    desc: "Baristas dial in espresso and prepare the day's first South Indian filter coffee decoctions.",
     highlight: true,
   },
   {
-    time: "07:30 AM",
-    title: "First Warm Loaves at Counter",
-    desc: "Freshly sliced sourdough loaves and cardamom buns placed warm into baker racks.",
+    time: "12:00 PM",
+    title: "Cold Brews & Fresh Bakes",
+    desc: "Slow-steeped cold brews and fresh croissants, rolls, and brownies at the counter.",
   },
   {
-    time: "11:30 AM",
-    title: "Cold Brew Extraction & Filter Service",
-    desc: "Peak midday pour-over brew service and 14-hour steeped cold brew tapped fresh on tap.",
+    time: "04:00 PM",
+    title: "Afternoon Chai & Snacks",
+    desc: "Fresh simmered masala chai, kesar chai, and grilled vegetarian sandwiches.",
   },
   {
-    time: "03:00 PM",
-    title: "Kitchen Closes & Quiet Afternoon Pour-over",
-    desc: "Savory hot kitchen concludes; manual pour-over bar, baked sweets, and courtyard reading continue.",
+    time: "08:00 PM",
+    title: "Evening Counter Service",
+    desc: "Evening coffee, cold brews, and desserts for quiet tables and conversation.",
   },
   {
-    time: "05:00 PM",
-    title: "Bar Closes & Group Head Clean-down",
-    desc: "Espresso group heads back-flushed with hot water; batch roasted beans sealed for tomorrow.",
+    time: "10:30 PM",
+    title: "Kitchen Orders Close",
+    desc: "Last call for grilled sandwiches, toast, and wraps.",
+  },
+  {
+    time: "11:00 PM",
+    title: "Doors Close",
+    desc: "Espresso group heads back-flushed with hot water; sealed for tomorrow.",
   },
 ];
 
@@ -54,29 +55,18 @@ export function BarLiveRhythm() {
   useEffect(() => {
     const updateTime = () => {
       const now = new Date();
-      const hours = now.getHours();
-      const minutes = now.getMinutes();
+      // Format time in Asia/Kolkata
+      const timeFmt = new Intl.DateTimeFormat("en-US", {
+        timeZone: CAFE_HOURS.timezone,
+        hour: "numeric",
+        minute: "numeric",
+        hour12: true,
+      });
+      setTimeString(timeFmt.format(now));
 
-      // Format time
-      const ampm = hours >= 12 ? "PM" : "AM";
-      const formattedH = hours % 12 || 12;
-      const formattedM = String(minutes).padStart(2, "0");
-      setTimeString(`${formattedH}:${formattedM} ${ampm}`);
-
-      // Check opening hours (7:00 AM to 5:00 PM = hours 7 to 16)
-      if (hours >= 7 && hours < 11) {
-        setIsCurrentlyOpen(true);
-        setCurrentStatusText("Morning rush: Warm sourdough sliced, lever espresso machine active");
-      } else if (hours >= 11 && hours < 15) {
-        setIsCurrentlyOpen(true);
-        setCurrentStatusText("Midday service: Pour overs, cold brew on tap, and fresh bakes");
-      } else if (hours >= 15 && hours < 17) {
-        setIsCurrentlyOpen(true);
-        setCurrentStatusText("Afternoon calm: Manual pour-overs, reading tables, and quiet courtyard");
-      } else {
-        setIsCurrentlyOpen(false);
-        setCurrentStatusText("Bar is resting: Tomorrow's single-origin batches roast at 6:30 AM");
-      }
+      const status = getOpeningStatus(now);
+      setIsCurrentlyOpen(status.isOpen);
+      setCurrentStatusText(status.statusText);
     };
 
     updateTime();
@@ -89,15 +79,10 @@ export function BarLiveRhythm() {
       {/* Live Indicator Bar */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
-          {/* Live Pulsing Dot */}
+          {/* Live Pulsing Dot (opacity only) */}
           <span className="relative flex h-3 w-3">
             <span
-              className={`absolute inline-flex h-full w-full animate-ping rounded-[2px] opacity-75 ${
-                isCurrentlyOpen ? "bg-cafe-veg" : "bg-cafe-terracotta"
-              }`}
-            />
-            <span
-              className={`relative inline-flex h-3 w-3 rounded-[2px] ${
+              className={`relative inline-flex h-3 w-3 rounded-[2px] animate-pulse-dot ${
                 isCurrentlyOpen ? "bg-cafe-veg" : "bg-cafe-terracotta"
               }`}
             />
@@ -139,11 +124,11 @@ export function BarLiveRhythm() {
       {isOpenRoutine && (
         <div className="mt-6 border-t border-cafe-border/70 pt-6">
           <div className="mb-4 flex items-center justify-between">
-            <span className="text-[11px] font-bold uppercase tracking-widest text-cafe-terracotta">
-              Daily Workshop Schedule on {cafeConfig.address.street}
+            <span className="text-xs font-medium text-cafe-terracotta">
+              Daily schedule at {cafeConfig.address.display}
             </span>
             <span className="text-[11px] text-cafe-olive font-medium">
-              Every day Monday - Sunday
+              Daily 10:00 AM to 11:00 PM
             </span>
           </div>
 

@@ -1,6 +1,8 @@
 import { ImageResponse } from "next/og";
 import { THEME_COLORS } from "@/config/theme";
 
+export const dynamic = "force-static";
+
 export const size = {
   width: 180,
   height: 180,
@@ -25,7 +27,7 @@ export default function AppleIcon() {
           borderRadius: 4,
         }}
       >
-        C
+        M
       </div>
     ),
     {

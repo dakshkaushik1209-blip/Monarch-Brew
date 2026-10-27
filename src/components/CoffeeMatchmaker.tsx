@@ -1,8 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Sparkles, ArrowRight, RotateCcw, Check, Coffee } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { Sparkles, ArrowRight, RotateCcw } from "lucide-react";
 import { AnimatedButton } from "@/components/AnimatedButton";
 
 interface Recommendation {
@@ -73,6 +72,8 @@ export function CoffeeMatchmaker() {
 
   const handleSelectTime = (key: string) => {
     setPrefTime(key);
+    void prefSweet;
+    void prefTime;
     // Determine result
     let keyResult = "traditional";
     if (prefCoffee === "black") {
@@ -101,14 +102,14 @@ export function CoffeeMatchmaker() {
       {/* Header */}
       <div className="flex flex-col gap-2 sm:flex-row sm:items-baseline sm:justify-between border-b border-cafe-border pb-5">
         <div>
-          <span className="inline-block rounded-[2px] border border-cafe-border bg-cafe-cream px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-widest text-cafe-terracotta">
-            Taste Matchmaker
+          <span className="text-xs font-medium text-cafe-terracotta">
+            Taste matchmaker
           </span>
-          <h3 className="mt-1 font-heading text-2xl font-black tracking-tight text-cafe-espresso sm:text-3xl">
-            Find your morning <em className="italic text-cafe-terracotta font-normal">pairing</em>
+          <h3 className="mt-1 font-heading text-2xl font-bold tracking-tight text-cafe-espresso text-balance sm:text-3xl">
+            Find your morning pairing
           </h3>
         </div>
-        <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-cafe-olive">
+        <div className="flex items-center gap-2 text-xs font-medium text-cafe-olive">
           <span>Step {Math.min(step, 3)} of 3</span>
         </div>
       </div>

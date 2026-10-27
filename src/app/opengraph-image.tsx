@@ -2,6 +2,8 @@ import { ImageResponse } from "next/og";
 import { cafeConfig } from "@/config/cafe";
 import { THEME_COLORS } from "@/config/theme";
 
+export const dynamic = "force-static";
+
 export const alt = `${cafeConfig.name} - ${cafeConfig.tagline}`;
 export const size = {
   width: 1200,
@@ -134,7 +136,7 @@ export default function OpenGraphImage() {
                 Location
               </span>
               <span style={{ fontSize: 16, color: THEME_COLORS.espresso, fontWeight: 500 }}>
-                {cafeConfig.address.street}, {cafeConfig.address.city}
+                {cafeConfig.address.street}, {cafeConfig.address.area}, {cafeConfig.address.city}
               </span>
             </div>
             <div style={{ display: "flex", flexDirection: "column", gap: "4px", alignItems: "flex-end" }}>

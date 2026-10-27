@@ -1,12 +1,15 @@
 import type { Metadata } from "next";
 import { Fraunces, DM_Sans } from "next/font/google";
 import "./globals.css";
+import "./hero-sticker.css";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
-import { OrderTrayProvider } from "@/components/OrderTrayContext";
-import { OrderTray } from "@/components/OrderTray";
+import { IntroSequence } from "@/components/IntroSequence";
+import { SmoothScroll } from "@/components/SmoothScroll";
+import { PageTransitionProgress } from "@/components/PageTransitionProgress";
+import { BackToTop } from "@/components/BackToTop";
 import { cafeConfig } from "@/config/cafe";
-import { getSiteUrl } from "@/config/site";
+import { getSiteUrl, isDemoMode } from "@/config/site";
 
 const fraunces = Fraunces({
   subsets: ["latin"],
@@ -39,10 +42,20 @@ export const metadata: Metadata = {
     locale: "en_US",
     type: "website",
   },
-  robots: {
-    index: true,
-    follow: true,
-  },
+  robots: isDemoMode()
+    ? {
+        index: false,
+        follow: false,
+        nocache: true,
+        googleBot: {
+          index: false,
+          follow: false,
+        },
+      }
+    : {
+        index: true,
+        follow: true,
+      },
   icons: {
     icon: [
       { url: "/icon.svg", type: "image/svg+xml" },
@@ -69,14 +82,15 @@ export default function RootLayout({
         >
           Skip to main content
         </a>
-        <OrderTrayProvider>
-          <Navbar />
-          <main id="main-content" tabIndex={-1} className="flex-1 outline-none">
-            {children}
-          </main>
-          <Footer />
-          <OrderTray />
-        </OrderTrayProvider>
+        <IntroSequence />
+        <SmoothScroll />
+        <PageTransitionProgress />
+        <Navbar />
+        <main id="main-content" tabIndex={-1} className="flex-1 outline-none">
+          {children}
+        </main>
+        <Footer />
+        <BackToTop />
       </body>
     </html>
   );

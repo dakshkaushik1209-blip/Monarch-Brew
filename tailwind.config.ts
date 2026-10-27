@@ -34,7 +34,15 @@ const config: Config = {
         site: "1200px",
       },
       transitionDuration: {
+        fast: "150ms",
+        base: "250ms",
+        slow: "500ms",
         short: "200ms",
+        400: "400ms",
+      },
+      transitionTimingFunction: {
+        "out-craft": "cubic-bezier(0.16, 1, 0.3, 1)",
+        "in-out-craft": "cubic-bezier(0.65, 0, 0.35, 1)",
       },
     },
   },

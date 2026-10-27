@@ -116,11 +116,11 @@ export function BrewCalculator() {
       {/* Header */}
       <div className="flex flex-col gap-2 sm:flex-row sm:items-baseline sm:justify-between border-b border-cafe-border pb-6">
         <div>
-          <span className="text-[11px] font-semibold uppercase tracking-widest text-cafe-terracotta">
-            Interactive Roastery Tool
+          <span className="text-xs font-medium text-cafe-terracotta">
+            Roastery tool
           </span>
-          <h3 className="font-heading text-2xl font-bold tracking-tight text-cafe-espresso sm:text-3xl">
-            Brew Ratio & Pour Calculator
+          <h3 className="font-heading text-2xl font-bold tracking-tight text-cafe-espresso text-balance sm:text-3xl">
+            Brew ratio and pour calculator
           </h3>
         </div>
         <p className="max-w-md text-xs text-cafe-espresso/80 sm:text-sm">
@@ -130,8 +130,8 @@ export function BrewCalculator() {
 
       {/* 1. Brew Method Selection Tabs */}
       <div className="mt-6 flex flex-col gap-3">
-        <label className="text-xs font-semibold uppercase tracking-wider text-cafe-espresso">
-          Select Brew Equipment:
+        <label className="text-xs font-medium text-cafe-espresso">
+          Select brew equipment:
         </label>
         <div className="flex flex-wrap gap-2">
           {BREW_METHODS.map((method) => {

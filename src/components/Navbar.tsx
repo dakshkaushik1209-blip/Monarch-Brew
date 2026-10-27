@@ -1,230 +1,386 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu as MenuIcon, X as CloseIcon, Receipt } from "lucide-react";
+import { motion, useReducedMotion } from "motion/react";
+import { Menu as MenuIcon, X as CloseIcon, Phone as PhoneIcon, Mail as MailIcon } from "lucide-react";
 import { cafeConfig } from "@/config/cafe";
+import { getPhoneLink, getEmailLink } from "@/lib/links";
 import { AnimatedButton } from "./AnimatedButton";
-import { useOrderTray } from "./OrderTrayContext";
 
 /**
- * Sticky Navbar adapted from 21st.dev Sticky Header (id: 23562).
- * Condenses smoothly in height on scroll with enhanced border-b definition.
+ * Sticky Glass Navbar:
+ * - Always visible and fixed at the top while scrolling in both directions (no hide/reveal, no compacting).
+ * - At top (scrollY < 24px): flat state matching cream page background, borderless, shadowless.
+ * - Past 24px: frosted glass state with backdrop-filter blur(12px) saturate(1.2), 80% cream opacity,
+ *   subtle border, and light soft shadow.
+ * - State toggled reactively via an IntersectionObserver on a 24px top sentinel element (zero continuous scroll event listeners).
+ * - Full fallbacks for @supports not backdrop-filter, prefers-reduced-transparency, and prefers-reduced-motion.
  */
 export function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const { totalCount, totalPrice, openTray } = useOrderTray();
+  const sentinelRef = useRef<HTMLDivElement>(null);
+  
   const pathname = usePathname();
-  const menuButtonRef = useRef<HTMLButtonElement>(null);
-  const firstLinkRef = useRef<HTMLAnchorElement>(null);
+  const shouldReduceMotion = useReducedMotion();
 
-  // Track scroll position to compact the header
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const drawerRef = useRef<HTMLDivElement>(null);
+  const progressBarRef = useRef<HTMLDivElement>(null);
+  const savedScrollY = useRef(0);
+
+  // Smooth scroll reading progress bar update via requestAnimationFrame (compositor-only)
   useEffect(() => {
-    function handleScroll() {
-      setIsScrolled(window.scrollY > 20);
-    }
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    handleScroll();
-    return () => window.removeEventListener("scroll", handleScroll);
+    let rafId: number | null = null;
+    const bar = progressBarRef.current;
+    if (!bar) return;
+
+    const update = () => {
+      const scrollHeight =
+        document.documentElement.scrollHeight - window.innerHeight;
+      const progress =
+        scrollHeight > 0
+          ? Math.min(1, Math.max(0, window.scrollY / scrollHeight))
+          : 0;
+      bar.style.transform = `scaleX(${progress})`;
+      rafId = null;
+    };
+
+    const onScroll = () => {
+      if (rafId === null) {
+        rafId = requestAnimationFrame(update);
+      }
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    update();
+
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      if (rafId !== null) cancelAnimationFrame(rafId);
+    };
   }, []);
 
-  // Close mobile menu on route change
+  // IntersectionObserver on a 24px sentinel placed at the top of the page
+  useEffect(() => {
+    const sentinel = sentinelRef.current;
+    if (!sentinel) return;
+
+    // Immediately evaluate scroll position for mid-page refresh, back navigation, anchor jumps
+    if (typeof window !== "undefined") {
+      setIsScrolled(window.scrollY > 24);
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        // When sentinel is intersecting the viewport top, user is within the top 24px (flat state)
+        // When not intersecting, user has scrolled down past ~24px (glass state)
+        setIsScrolled(!entry.isIntersecting);
+      },
+      {
+        root: null,
+        threshold: 0,
+      }
+    );
+
+    observer.observe(sentinel);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
+
+  // Sync scroll state and close mobile drawer on route changes or anchor jumps
   useEffect(() => {
     setMobileMenuOpen(false);
+    if (typeof window !== "undefined") {
+      requestAnimationFrame(() => {
+        setIsScrolled(window.scrollY > 24);
+      });
+    }
   }, [pathname]);
 
-  // Handle Escape key to close mobile menu
+  const closeMenu = useCallback(() => {
+    setMobileMenuOpen(false);
+    menuButtonRef.current?.focus({ preventScroll: true });
+  }, []);
+
+  // Keyboard navigation & Focus trap for fullscreen mobile menu
   useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
-      if (event.key === "Escape" && mobileMenuOpen) {
-        setMobileMenuOpen(false);
-        menuButtonRef.current?.focus();
+      if (!mobileMenuOpen) return;
+
+      if (event.key === "Escape") {
+        event.preventDefault();
+        closeMenu();
+        return;
+      }
+
+      if (event.key === "Tab" && drawerRef.current) {
+        const focusableElements = drawerRef.current.querySelectorAll<HTMLElement>(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        );
+        const firstEl = focusableElements[0];
+        const lastEl = focusableElements[focusableElements.length - 1];
+
+        if (event.shiftKey) {
+          if (document.activeElement === firstEl) {
+            event.preventDefault();
+            lastEl?.focus();
+          }
+        } else {
+          if (document.activeElement === lastEl) {
+            event.preventDefault();
+            firstEl?.focus();
+          }
+        }
       }
     }
 
     if (mobileMenuOpen) {
+      savedScrollY.current = window.scrollY;
       document.addEventListener("keydown", handleKeyDown);
       document.body.style.overflow = "hidden";
-      firstLinkRef.current?.focus();
+      setTimeout(() => {
+        closeButtonRef.current?.focus({ preventScroll: true });
+      }, 50);
     } else {
       document.body.style.overflow = "";
+      if (savedScrollY.current > 0) {
+        window.scrollTo({ top: savedScrollY.current, behavior: "instant" });
+        setIsScrolled(savedScrollY.current > 24);
+      }
     }
 
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
       document.body.style.overflow = "";
     };
-  }, [mobileMenuOpen]);
+  }, [mobileMenuOpen, closeMenu]);
 
   return (
-    <header
-      className={`sticky top-0 z-40 w-full transition-all duration-300 ease-out ${
-        isScrolled
-          ? "border-b border-cafe-border bg-cafe-cream/98 py-3 shadow-[0_2px_8px_rgba(59,42,32,0.04)] backdrop-blur-md"
-          : "border-b border-cafe-border/50 bg-cafe-cream py-5"
-      }`}
-    >
-      <div className="mx-auto flex max-w-site items-center justify-between px-4 sm:px-6 lg:px-8">
-        {/* Brand / Logo */}
-        <Link
-          href="/"
-          className="group flex flex-col text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cafe-terracotta"
-        >
-          <span
-            className={`font-heading font-semibold tracking-tight text-cafe-espresso transition-all duration-300 group-hover:text-cafe-terracotta ${
-              isScrolled ? "text-xl sm:text-2xl" : "text-2xl sm:text-3xl"
-            }`}
-          >
-            {cafeConfig.name}
-          </span>
-          <span className="text-[10px] uppercase tracking-widest text-cafe-olive transition-opacity duration-300">
-            {cafeConfig.tagline}
-          </span>
-        </Link>
+    <>
+      {/* 24px sentinel element at the very top of the page for zero-jank IntersectionObserver scroll detection */}
+      <div
+        ref={sentinelRef}
+        aria-hidden="true"
+        className="pointer-events-none absolute top-0 left-0 h-6 w-full -z-10 opacity-0"
+      />
 
-        {/* Desktop Navigation Links */}
-        <nav
-          aria-label="Main Navigation"
-          className="hidden items-center gap-8 md:flex"
-        >
-          {cafeConfig.navigation.map((item) => {
-            const isActive = pathname === item.href;
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`group relative py-1 text-xs font-semibold uppercase tracking-wider transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cafe-terracotta ${
-                  isActive
-                    ? "text-cafe-terracotta"
-                    : "text-cafe-espresso/80 hover:text-cafe-terracotta"
-                }`}
-              >
-                <span>{item.label}</span>
-                {/* Active or hover underline draw */}
-                <span
-                  aria-hidden="true"
-                  className={`absolute bottom-0 left-0 h-[2px] w-full bg-cafe-terracotta transition-transform duration-200 ease-out ${
-                    isActive ? "scale-x-100" : "origin-left scale-x-0 group-hover:scale-x-100"
+      <header
+        className={`sticky top-0 z-40 w-full py-4 navbar-transition ${
+          mobileMenuOpen
+            ? "navbar-solid"
+            : isScrolled
+            ? "navbar-glass"
+            : "navbar-flat"
+        }`}
+      >
+        <div className="mx-auto flex max-w-site items-center justify-between px-4 sm:px-6 lg:px-8">
+          {/* Brand / Logo */}
+          <Link
+            href="/"
+            className="group flex flex-col text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cafe-terracotta"
+          >
+            <span className="font-heading text-2xl font-semibold tracking-tight text-cafe-espresso transition-colors duration-fast group-hover:text-cafe-terracotta sm:text-3xl">
+              {cafeConfig.name}
+            </span>
+            <span className="text-[11px] font-medium text-cafe-olive">
+              {cafeConfig.tagline}
+            </span>
+          </Link>
+
+          {/* Desktop Navigation Links */}
+          <nav
+            aria-label="Main Navigation"
+            className="hidden items-center gap-8 md:flex"
+          >
+            {cafeConfig.navigation.map((item) => {
+              const isActive = pathname === item.href;
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={`group relative py-1 text-xs font-semibold uppercase tracking-wider transition-colors duration-fast focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cafe-terracotta ${
+                    isActive
+                      ? "text-cafe-terracotta"
+                      : "text-cafe-espresso/80 hover:text-cafe-terracotta"
                   }`}
-                />
-              </Link>
-            );
-          })}
-        </nav>
+                >
+                  <span>{item.label}</span>
+                  {/* Fluid sliding active indicator or hover preview */}
+                  {isActive ? (
+                    shouldReduceMotion ? (
+                      <span
+                        aria-hidden="true"
+                        className="absolute bottom-0 left-0 h-[2px] w-full bg-cafe-terracotta"
+                      />
+                    ) : (
+                      <motion.span
+                        layoutId="navbar-active-underline"
+                        aria-hidden="true"
+                        className="absolute bottom-0 left-0 h-[2px] w-full bg-cafe-terracotta"
+                        transition={{
+                          type: "spring",
+                          stiffness: 380,
+                          damping: 32,
+                        }}
+                      />
+                    )
+                  ) : (
+                    <span
+                      aria-hidden="true"
+                      className="absolute bottom-0 left-0 h-[2px] w-full origin-left scale-x-0 bg-cafe-terracotta transition-transform duration-base ease-out-craft group-hover:scale-x-100"
+                    />
+                  )}
+                </Link>
+              );
+            })}
+          </nav>
 
-        {/* Action Button & Mobile Toggle */}
-        <div className="flex items-center gap-3">
-          {totalCount > 0 && (
-            <button
-              type="button"
-              onClick={openTray}
-              aria-label={`View counter order tray: ${totalCount} items, total ₹${totalPrice}`}
-              className="inline-flex items-center gap-1.5 rounded-[2px] border border-cafe-terracotta/40 bg-cafe-cream-deep px-2.5 py-1.5 text-xs font-semibold text-cafe-espresso transition-all duration-short hover:border-cafe-terracotta hover:bg-cafe-cream focus-visible:outline-2 focus-visible:outline-cafe-terracotta"
+          {/* Action Button & Mobile Toggle */}
+          <div className="flex items-center gap-3">
+            <AnimatedButton
+              href="/visit#reserve"
+              variant="primary"
+              className="hidden sm:inline-flex"
             >
-              <Receipt className="h-3.5 w-3.5 text-cafe-terracotta" aria-hidden="true" />
-              <span className="tabular-nums">Tray ({totalCount})</span>
-              <span className="hidden font-mono text-[11px] text-cafe-olive lg:inline tabular-nums">· ₹{totalPrice}</span>
-            </button>
-          )}
+              Reserve a table
+            </AnimatedButton>
 
-          <AnimatedButton
-            href="/visit#reserve"
-            variant="primary"
-            className="hidden sm:inline-flex"
-          >
-            Reserve a table
-          </AnimatedButton>
-
-          {/* Mobile Menu Toggle Button */}
-          <button
-            ref={menuButtonRef}
-            type="button"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            aria-expanded={mobileMenuOpen}
-            aria-controls="mobile-navigation"
-            aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
-            className="inline-flex h-10 w-10 items-center justify-center rounded-[2px] border border-cafe-border bg-cafe-cream-deep p-2 text-cafe-espresso transition-colors duration-200 hover:text-cafe-terracotta focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cafe-terracotta md:hidden"
-          >
-            {mobileMenuOpen ? (
-              <CloseIcon className="h-5 w-5" aria-hidden="true" />
-            ) : (
+            {/* Mobile Menu Toggle Button */}
+            <button
+              ref={menuButtonRef}
+              type="button"
+              onClick={() => {
+                savedScrollY.current = window.scrollY;
+                setMobileMenuOpen(true);
+              }}
+              aria-expanded={mobileMenuOpen}
+              aria-controls="fullscreen-mobile-menu"
+              aria-label="Open mobile menu"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-[2px] border border-cafe-border bg-cafe-cream-deep p-2 text-cafe-espresso transition-colors duration-fast hover:text-cafe-terracotta active:scale-[0.98] motion-reduce:active:scale-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cafe-terracotta md:hidden"
+            >
               <MenuIcon className="h-5 w-5" aria-hidden="true" />
-            )}
-          </button>
+            </button>
+          </div>
         </div>
-      </div>
 
-      {/* Mobile Drawer Navigation */}
+        {/* Subtle craft scroll progress bar along the bottom edge of sticky navbar */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute bottom-0 left-0 h-[2px] w-full overflow-hidden"
+        >
+          <div
+            ref={progressBarRef}
+            className="h-full w-full origin-left bg-cafe-terracotta"
+            style={{ transform: "scaleX(0)" }}
+          />
+        </div>
+      </header>
+
+      {/* Fullscreen Espresso Mobile Menu Panel */}
       {mobileMenuOpen && (
         <div
-          id="mobile-navigation"
+          ref={drawerRef}
+          id="fullscreen-mobile-menu"
           role="dialog"
           aria-modal="true"
-          aria-label="Mobile Navigation Menu"
-          className="fixed inset-x-0 top-18 bottom-0 z-50 flex flex-col justify-between border-t border-cafe-border bg-cafe-cream px-6 py-8 md:hidden shadow-xl"
+          aria-label="Main Navigation Menu"
+          className="fixed inset-0 z-[100] flex flex-col justify-between bg-cafe-espresso text-cafe-cream p-6 sm:p-10 md:hidden animate-view-fade"
         >
-          <div className="flex flex-col gap-6">
-            <span className="text-[11px] font-semibold uppercase tracking-widest text-cafe-olive">
-              Menu Links
-            </span>
-            <nav className="flex flex-col gap-5">
-              {cafeConfig.navigation.map((item, index) => {
-                const isActive = pathname === item.href;
-                return (
+          {/* Header Bar inside Mobile Panel */}
+          <div className="flex items-center justify-between border-b border-cafe-cream/15 pb-4">
+            <Link
+              href="/"
+              onClick={closeMenu}
+              aria-label={`${cafeConfig.name} - Home`}
+              className="font-heading text-lg font-light tracking-wide text-cafe-cream/90 transition-colors duration-fast hover:text-cafe-terracotta focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cafe-terracotta"
+            >
+              {cafeConfig.name}
+            </Link>
+            <button
+              ref={closeButtonRef}
+              type="button"
+              onClick={closeMenu}
+              aria-label="Close menu"
+              className="flex h-11 w-11 items-center justify-center rounded-[2px] border border-cafe-cream/20 bg-cafe-espresso text-cafe-cream transition-colors duration-fast hover:bg-cafe-cream/10 active:scale-[0.98] motion-reduce:active:scale-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cafe-terracotta"
+            >
+              <CloseIcon className="h-6 w-6" aria-hidden="true" />
+            </button>
+          </div>
+
+          {/* Staggered Large Fraunces Nav Links */}
+          <nav className="my-auto flex flex-col gap-6 py-6">
+            {cafeConfig.navigation.map((item, index) => {
+              const isActive = pathname === item.href;
+              return (
+                <div
+                  key={item.href}
+                  className="overflow-hidden"
+                  style={{
+                    animationDelay: `${index * 60}ms`,
+                  }}
+                >
                   <Link
-                    key={item.href}
-                    ref={index === 0 ? firstLinkRef : undefined}
                     href={item.href}
-                    onClick={() => setMobileMenuOpen(false)}
-                    className={`font-heading text-2xl transition-colors duration-200 ${
+                    onClick={closeMenu}
+                    className={`block font-heading text-3xl font-semibold tracking-tight transition-colors duration-fast ${
                       isActive
-                        ? "text-cafe-terracotta font-semibold"
-                        : "text-cafe-espresso hover:text-cafe-terracotta"
+                        ? "text-cafe-terracotta"
+                        : "text-cafe-cream/90 hover:text-cafe-terracotta"
                     }`}
                   >
                     {item.label}
                   </Link>
-                );
-              })}
-            </nav>
-          </div>
+                </div>
+              );
+            })}
+          </nav>
 
-          <div className="flex flex-col gap-4 border-t border-cafe-border/80 pt-6">
-            {totalCount > 0 && (
-              <button
-                type="button"
-                onClick={() => {
-                  setMobileMenuOpen(false);
-                  openTray();
-                }}
-                className="flex w-full items-center justify-between rounded-[2px] border border-cafe-border bg-cafe-cream-deep px-4 py-3 text-sm font-semibold text-cafe-espresso transition-colors hover:bg-cafe-cream"
-              >
-                <span className="flex items-center gap-2">
-                  <Receipt className="h-4 w-4 text-cafe-terracotta" aria-hidden="true" />
-                  <span>View Counter Order Tray</span>
-                </span>
-                <span className="font-mono text-xs text-cafe-olive tabular-nums">
-                  {totalCount} items · ₹{totalPrice}
-                </span>
-              </button>
-            )}
-            <div className="text-xs text-cafe-espresso/80">
-              <p className="font-semibold text-cafe-espresso">{cafeConfig.address.street}</p>
+          {/* Drawer Bottom Actions & Address */}
+          <div className="flex flex-col gap-4 border-t border-cafe-cream/15 pt-5">
+            <div className="text-xs text-cafe-cream/70 space-y-1.5">
+              <p className="font-semibold text-cafe-cream">{cafeConfig.address.display}</p>
               <p>{cafeConfig.hours.weekday}</p>
+              {getPhoneLink() && (
+                <p className="pt-1">
+                  <a
+                    href={getPhoneLink()!.href}
+                    className="inline-flex min-h-[36px] items-center gap-2 text-cafe-cream/90 transition-colors duration-fast hover:text-cafe-terracotta underline underline-offset-2"
+                  >
+                    <PhoneIcon className="h-3.5 w-3.5 text-cafe-terracotta" aria-hidden="true" />
+                    <span>{getPhoneLink()!.display}</span>
+                  </a>
+                </p>
+              )}
+              {getEmailLink() && (
+                <p>
+                  <a
+                    href={getEmailLink()!.href}
+                    className="inline-flex min-h-[36px] items-center gap-2 text-cafe-cream/90 transition-colors duration-fast hover:text-cafe-terracotta underline underline-offset-2"
+                  >
+                    <MailIcon className="h-3.5 w-3.5 text-cafe-terracotta" aria-hidden="true" />
+                    <span>{getEmailLink()!.display}</span>
+                  </a>
+                </p>
+              )}
             </div>
+
             <AnimatedButton
               href="/visit#reserve"
-              variant="primary"
+              variant="dark"
               className="w-full py-3.5"
-              onClick={() => setMobileMenuOpen(false)}
+              onClick={closeMenu}
             >
               Reserve a table
             </AnimatedButton>
           </div>
         </div>
       )}
-    </header>
+    </>
   );
 }

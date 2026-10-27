@@ -2,6 +2,8 @@ import type { MetadataRoute } from "next";
 import { cafeConfig } from "@/config/cafe";
 import { THEME_COLORS } from "@/config/theme";
 
+export const dynamic = "force-static";
+
 export default function manifest(): MetadataRoute.Manifest {
   return {
     name: cafeConfig.name,
